@@ -1,0 +1,1650 @@
+
+11. Printing statistics.
+
+=== $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0101 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     2523 wires
+     3640 wire bits
+       13 public wires
+     1130 public wire bits
+       13 ports
+     1130 port bits
+     3059 cells
+      577   AND2x1
+       24   AND3x1
+       15   AND4x1
+       14   AOI21x1
+       16   AOI221x1
+       11   AOI22x1
+        1   AOI311x1
+        8   AOI31x1
+      564   DFFHQNx1
+     1095   INVx1
+      535   MUX2x1
+       54   NAND2x1
+       26   NAND3x1
+       13   NAND4x1
+        4   NOR2x1
+        2   NOR3x1
+        2   NOR4x1
+       22   OAI21x1
+       25   OAI221x1
+        4   OAI22x1
+       16   OAI31x1
+        6   OR2x1
+        2   OR3x1
+        2   OR4x1
+       13   XNOR2x1
+        7   XNOR3x1
+        1   XOR2x1
+
+=== $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0110 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     2523 wires
+     3640 wire bits
+       13 public wires
+     1130 public wire bits
+       13 ports
+     1130 port bits
+     3059 cells
+      577   AND2x1
+       24   AND3x1
+       15   AND4x1
+       14   AOI21x1
+       16   AOI221x1
+       11   AOI22x1
+        1   AOI311x1
+        8   AOI31x1
+      564   DFFHQNx1
+     1095   INVx1
+      535   MUX2x1
+       54   NAND2x1
+       26   NAND3x1
+       13   NAND4x1
+        4   NOR2x1
+        2   NOR3x1
+        2   NOR4x1
+       22   OAI21x1
+       25   OAI221x1
+        4   OAI22x1
+       16   OAI31x1
+        6   OR2x1
+        2   OR3x1
+        2   OR4x1
+       13   XNOR2x1
+        7   XNOR3x1
+        1   XOR2x1
+
+=== $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0111 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     2523 wires
+     3640 wire bits
+       13 public wires
+     1130 public wire bits
+       13 ports
+     1130 port bits
+     3059 cells
+      577   AND2x1
+       24   AND3x1
+       15   AND4x1
+       14   AOI21x1
+       16   AOI221x1
+       11   AOI22x1
+        1   AOI311x1
+        8   AOI31x1
+      564   DFFHQNx1
+     1095   INVx1
+      535   MUX2x1
+       54   NAND2x1
+       26   NAND3x1
+       13   NAND4x1
+        4   NOR2x1
+        2   NOR3x1
+        2   NOR4x1
+       22   OAI21x1
+       25   OAI221x1
+        4   OAI22x1
+       16   OAI31x1
+        6   OR2x1
+        2   OR3x1
+        2   OR4x1
+       13   XNOR2x1
+        7   XNOR3x1
+        1   XOR2x1
+
+=== $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1000 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     2523 wires
+     3640 wire bits
+       13 public wires
+     1130 public wire bits
+       13 ports
+     1130 port bits
+     3059 cells
+      577   AND2x1
+       24   AND3x1
+       15   AND4x1
+       14   AOI21x1
+       16   AOI221x1
+       11   AOI22x1
+        1   AOI311x1
+        8   AOI31x1
+      564   DFFHQNx1
+     1095   INVx1
+      535   MUX2x1
+       54   NAND2x1
+       26   NAND3x1
+       13   NAND4x1
+        4   NOR2x1
+        2   NOR3x1
+        2   NOR4x1
+       22   OAI21x1
+       25   OAI221x1
+        4   OAI22x1
+       16   OAI31x1
+        6   OR2x1
+        2   OR3x1
+        2   OR4x1
+       13   XNOR2x1
+        7   XNOR3x1
+        1   XOR2x1
+
+=== $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1001 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     2523 wires
+     3640 wire bits
+       13 public wires
+     1130 public wire bits
+       13 ports
+     1130 port bits
+     3059 cells
+      577   AND2x1
+       24   AND3x1
+       15   AND4x1
+       14   AOI21x1
+       16   AOI221x1
+       11   AOI22x1
+        1   AOI311x1
+        8   AOI31x1
+      564   DFFHQNx1
+     1095   INVx1
+      535   MUX2x1
+       54   NAND2x1
+       26   NAND3x1
+       13   NAND4x1
+        4   NOR2x1
+        2   NOR3x1
+        2   NOR4x1
+       22   OAI21x1
+       25   OAI221x1
+        4   OAI22x1
+       16   OAI31x1
+        6   OR2x1
+        2   OR3x1
+        2   OR4x1
+       13   XNOR2x1
+        7   XNOR3x1
+        1   XOR2x1
+
+=== $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1010 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     2523 wires
+     3640 wire bits
+       13 public wires
+     1130 public wire bits
+       13 ports
+     1130 port bits
+     3059 cells
+      577   AND2x1
+       24   AND3x1
+       15   AND4x1
+       14   AOI21x1
+       16   AOI221x1
+       11   AOI22x1
+        1   AOI311x1
+        8   AOI31x1
+      564   DFFHQNx1
+     1095   INVx1
+      535   MUX2x1
+       54   NAND2x1
+       26   NAND3x1
+       13   NAND4x1
+        4   NOR2x1
+        2   NOR3x1
+        2   NOR4x1
+       22   OAI21x1
+       25   OAI221x1
+        4   OAI22x1
+       16   OAI31x1
+        6   OR2x1
+        2   OR3x1
+        2   OR4x1
+       13   XNOR2x1
+        7   XNOR3x1
+        1   XOR2x1
+
+=== $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1011 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     2523 wires
+     3640 wire bits
+       13 public wires
+     1130 public wire bits
+       13 ports
+     1130 port bits
+     3059 cells
+      577   AND2x1
+       24   AND3x1
+       15   AND4x1
+       14   AOI21x1
+       16   AOI221x1
+       11   AOI22x1
+        1   AOI311x1
+        8   AOI31x1
+      564   DFFHQNx1
+     1095   INVx1
+      535   MUX2x1
+       54   NAND2x1
+       26   NAND3x1
+       13   NAND4x1
+        4   NOR2x1
+        2   NOR3x1
+        2   NOR4x1
+       22   OAI21x1
+       25   OAI221x1
+        4   OAI22x1
+       16   OAI31x1
+        6   OR2x1
+        2   OR3x1
+        2   OR4x1
+       13   XNOR2x1
+        7   XNOR3x1
+        1   XOR2x1
+
+=== $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1100 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     2523 wires
+     3640 wire bits
+       13 public wires
+     1130 public wire bits
+       13 ports
+     1130 port bits
+     3059 cells
+      577   AND2x1
+       24   AND3x1
+       15   AND4x1
+       14   AOI21x1
+       16   AOI221x1
+       11   AOI22x1
+        1   AOI311x1
+        8   AOI31x1
+      564   DFFHQNx1
+     1095   INVx1
+      535   MUX2x1
+       54   NAND2x1
+       26   NAND3x1
+       13   NAND4x1
+        4   NOR2x1
+        2   NOR3x1
+        2   NOR4x1
+       22   OAI21x1
+       25   OAI221x1
+        4   OAI22x1
+       16   OAI31x1
+        6   OR2x1
+        2   OR3x1
+        2   OR4x1
+       13   XNOR2x1
+        7   XNOR3x1
+        1   XOR2x1
+
+=== $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1101 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     2523 wires
+     3640 wire bits
+       13 public wires
+     1130 public wire bits
+       13 ports
+     1130 port bits
+     3059 cells
+      577   AND2x1
+       24   AND3x1
+       15   AND4x1
+       14   AOI21x1
+       16   AOI221x1
+       11   AOI22x1
+        1   AOI311x1
+        8   AOI31x1
+      564   DFFHQNx1
+     1095   INVx1
+      535   MUX2x1
+       54   NAND2x1
+       26   NAND3x1
+       13   NAND4x1
+        4   NOR2x1
+        2   NOR3x1
+        2   NOR4x1
+       22   OAI21x1
+       25   OAI221x1
+        4   OAI22x1
+       16   OAI31x1
+        6   OR2x1
+        2   OR3x1
+        2   OR4x1
+       13   XNOR2x1
+        7   XNOR3x1
+        1   XOR2x1
+
+=== $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1110 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     2523 wires
+     3640 wire bits
+       13 public wires
+     1130 public wire bits
+       13 ports
+     1130 port bits
+     3059 cells
+      577   AND2x1
+       24   AND3x1
+       15   AND4x1
+       14   AOI21x1
+       16   AOI221x1
+       11   AOI22x1
+        1   AOI311x1
+        8   AOI31x1
+      564   DFFHQNx1
+     1095   INVx1
+      535   MUX2x1
+       54   NAND2x1
+       26   NAND3x1
+       13   NAND4x1
+        4   NOR2x1
+        2   NOR3x1
+        2   NOR4x1
+       22   OAI21x1
+       25   OAI221x1
+        4   OAI22x1
+       16   OAI31x1
+        6   OR2x1
+        2   OR3x1
+        2   OR4x1
+       13   XNOR2x1
+        7   XNOR3x1
+        1   XOR2x1
+
+=== $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1111 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     2523 wires
+     3640 wire bits
+       13 public wires
+     1130 public wire bits
+       13 ports
+     1130 port bits
+     3059 cells
+      577   AND2x1
+       24   AND3x1
+       15   AND4x1
+       14   AOI21x1
+       16   AOI221x1
+       11   AOI22x1
+        1   AOI311x1
+        8   AOI31x1
+      564   DFFHQNx1
+     1095   INVx1
+      535   MUX2x1
+       54   NAND2x1
+       26   NAND3x1
+       13   NAND4x1
+        4   NOR2x1
+        2   NOR3x1
+        2   NOR4x1
+       22   OAI21x1
+       25   OAI221x1
+        4   OAI22x1
+       16   OAI31x1
+        6   OR2x1
+        2   OR3x1
+        2   OR4x1
+       13   XNOR2x1
+        7   XNOR3x1
+        1   XOR2x1
+
+=== $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0001 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     1606 wires
+     5387 wire bits
+       23 public wires
+     3804 public wire bits
+       17 ports
+     2754 port bits
+     2108 cells
+      525   AND4x1
+      524   AOI31x1
+        7   INVx1
+      524   NAND2x1
+      525   NAND3x1
+        2   NAND4x1
+        1   NOR2x1
+        2 submodules
+        1   $paramod$5cd899e5ee4aed9f430e46cebb03ce403cbb1c8a\sram_2r1w
+        1   $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0001
+
+   Area for cell type \mobol_sram_4096x512_2r1w is unknown!
+
+=== $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0010 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     1606 wires
+     5387 wire bits
+       23 public wires
+     3804 public wire bits
+       17 ports
+     2754 port bits
+     2108 cells
+      525   AND4x1
+      524   AOI31x1
+        7   INVx1
+      524   NAND2x1
+      525   NAND3x1
+        2   NAND4x1
+        1   NOR2x1
+        2 submodules
+        1   $paramod$5cd899e5ee4aed9f430e46cebb03ce403cbb1c8a\sram_2r1w
+        1   $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0010
+
+   Area for cell type \mobol_sram_4096x512_2r1w is unknown!
+
+=== $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0011 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     1606 wires
+     5387 wire bits
+       23 public wires
+     3804 public wire bits
+       17 ports
+     2754 port bits
+     2108 cells
+      525   AND4x1
+      524   AOI31x1
+        7   INVx1
+      524   NAND2x1
+      525   NAND3x1
+        2   NAND4x1
+        1   NOR2x1
+        2 submodules
+        1   $paramod$5cd899e5ee4aed9f430e46cebb03ce403cbb1c8a\sram_2r1w
+        1   $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0011
+
+   Area for cell type \mobol_sram_4096x512_2r1w is unknown!
+
+=== $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0100 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     1606 wires
+     5387 wire bits
+       23 public wires
+     3804 public wire bits
+       17 ports
+     2754 port bits
+     2108 cells
+      525   AND4x1
+      524   AOI31x1
+        7   INVx1
+      524   NAND2x1
+      525   NAND3x1
+        2   NAND4x1
+        1   NOR2x1
+        2 submodules
+        1   $paramod$5cd899e5ee4aed9f430e46cebb03ce403cbb1c8a\sram_2r1w
+        1   $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0100
+
+   Area for cell type \mobol_sram_4096x512_2r1w is unknown!
+
+=== $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0101 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     1606 wires
+     5387 wire bits
+       23 public wires
+     3804 public wire bits
+       17 ports
+     2754 port bits
+     2108 cells
+      525   AND4x1
+      524   AOI31x1
+        7   INVx1
+      524   NAND2x1
+      525   NAND3x1
+        2   NAND4x1
+        1   NOR2x1
+        2 submodules
+        1   $paramod$5cd899e5ee4aed9f430e46cebb03ce403cbb1c8a\sram_2r1w
+        1   $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0101
+
+   Area for cell type \mobol_sram_4096x512_2r1w is unknown!
+
+=== $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0110 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     1606 wires
+     5387 wire bits
+       23 public wires
+     3804 public wire bits
+       17 ports
+     2754 port bits
+     2108 cells
+      525   AND4x1
+      524   AOI31x1
+        7   INVx1
+      524   NAND2x1
+      525   NAND3x1
+        2   NAND4x1
+        1   NOR2x1
+        2 submodules
+        1   $paramod$5cd899e5ee4aed9f430e46cebb03ce403cbb1c8a\sram_2r1w
+        1   $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0110
+
+   Area for cell type \mobol_sram_4096x512_2r1w is unknown!
+
+=== $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0111 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     1606 wires
+     5387 wire bits
+       23 public wires
+     3804 public wire bits
+       17 ports
+     2754 port bits
+     2108 cells
+      525   AND4x1
+      524   AOI31x1
+        7   INVx1
+      524   NAND2x1
+      525   NAND3x1
+        2   NAND4x1
+        1   NOR2x1
+        2 submodules
+        1   $paramod$5cd899e5ee4aed9f430e46cebb03ce403cbb1c8a\sram_2r1w
+        1   $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0111
+
+   Area for cell type \mobol_sram_4096x512_2r1w is unknown!
+
+=== $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1000 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     1606 wires
+     5387 wire bits
+       23 public wires
+     3804 public wire bits
+       17 ports
+     2754 port bits
+     2108 cells
+      525   AND4x1
+      524   AOI31x1
+        7   INVx1
+      524   NAND2x1
+      525   NAND3x1
+        2   NAND4x1
+        1   NOR2x1
+        2 submodules
+        1   $paramod$5cd899e5ee4aed9f430e46cebb03ce403cbb1c8a\sram_2r1w
+        1   $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1000
+
+   Area for cell type \mobol_sram_4096x512_2r1w is unknown!
+
+=== $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1001 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     1606 wires
+     5387 wire bits
+       23 public wires
+     3804 public wire bits
+       17 ports
+     2754 port bits
+     2108 cells
+      525   AND4x1
+      524   AOI31x1
+        7   INVx1
+      524   NAND2x1
+      525   NAND3x1
+        2   NAND4x1
+        1   NOR2x1
+        2 submodules
+        1   $paramod$5cd899e5ee4aed9f430e46cebb03ce403cbb1c8a\sram_2r1w
+        1   $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1001
+
+   Area for cell type \mobol_sram_4096x512_2r1w is unknown!
+
+=== $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1010 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     1606 wires
+     5387 wire bits
+       23 public wires
+     3804 public wire bits
+       17 ports
+     2754 port bits
+     2108 cells
+      525   AND4x1
+      524   AOI31x1
+        7   INVx1
+      524   NAND2x1
+      525   NAND3x1
+        2   NAND4x1
+        1   NOR2x1
+        2 submodules
+        1   $paramod$5cd899e5ee4aed9f430e46cebb03ce403cbb1c8a\sram_2r1w
+        1   $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1010
+
+   Area for cell type \mobol_sram_4096x512_2r1w is unknown!
+
+=== $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1011 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     1606 wires
+     5387 wire bits
+       23 public wires
+     3804 public wire bits
+       17 ports
+     2754 port bits
+     2108 cells
+      525   AND4x1
+      524   AOI31x1
+        7   INVx1
+      524   NAND2x1
+      525   NAND3x1
+        2   NAND4x1
+        1   NOR2x1
+        2 submodules
+        1   $paramod$5cd899e5ee4aed9f430e46cebb03ce403cbb1c8a\sram_2r1w
+        1   $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1011
+
+   Area for cell type \mobol_sram_4096x512_2r1w is unknown!
+
+=== $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1100 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     1606 wires
+     5387 wire bits
+       23 public wires
+     3804 public wire bits
+       17 ports
+     2754 port bits
+     2108 cells
+      525   AND4x1
+      524   AOI31x1
+        7   INVx1
+      524   NAND2x1
+      525   NAND3x1
+        2   NAND4x1
+        1   NOR2x1
+        2 submodules
+        1   $paramod$5cd899e5ee4aed9f430e46cebb03ce403cbb1c8a\sram_2r1w
+        1   $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1100
+
+   Area for cell type \mobol_sram_4096x512_2r1w is unknown!
+
+=== $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1101 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     1606 wires
+     5387 wire bits
+       23 public wires
+     3804 public wire bits
+       17 ports
+     2754 port bits
+     2108 cells
+      525   AND4x1
+      524   AOI31x1
+        7   INVx1
+      524   NAND2x1
+      525   NAND3x1
+        2   NAND4x1
+        1   NOR2x1
+        2 submodules
+        1   $paramod$5cd899e5ee4aed9f430e46cebb03ce403cbb1c8a\sram_2r1w
+        1   $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1101
+
+   Area for cell type \mobol_sram_4096x512_2r1w is unknown!
+
+=== $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1110 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     1606 wires
+     5387 wire bits
+       23 public wires
+     3804 public wire bits
+       17 ports
+     2754 port bits
+     2108 cells
+      525   AND4x1
+      524   AOI31x1
+        7   INVx1
+      524   NAND2x1
+      525   NAND3x1
+        2   NAND4x1
+        1   NOR2x1
+        2 submodules
+        1   $paramod$5cd899e5ee4aed9f430e46cebb03ce403cbb1c8a\sram_2r1w
+        1   $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1110
+
+   Area for cell type \mobol_sram_4096x512_2r1w is unknown!
+
+=== $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1111 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     1606 wires
+     5387 wire bits
+       23 public wires
+     3804 public wire bits
+       17 ports
+     2754 port bits
+     2108 cells
+      525   AND4x1
+      524   AOI31x1
+        7   INVx1
+      524   NAND2x1
+      525   NAND3x1
+        2   NAND4x1
+        1   NOR2x1
+        2 submodules
+        1   $paramod$5cd899e5ee4aed9f430e46cebb03ce403cbb1c8a\sram_2r1w
+        1   $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1111
+
+   Area for cell type \mobol_sram_4096x512_2r1w is unknown!
+
+=== $paramod$5cd899e5ee4aed9f430e46cebb03ce403cbb1c8a\sram_2r1w ===
+
+        +----------Local Count, excluding submodules.
+        | 
+        8 wires
+     1574 wire bits
+        8 public wires
+     1574 public wire bits
+        8 ports
+     1574 port bits
+        1 cells
+        1   mobol_sram_4096x512_2r1w
+
+   Area for cell type \mobol_sram_4096x512_2r1w is unknown!
+
+=== $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0000 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     2523 wires
+     3640 wire bits
+       13 public wires
+     1130 public wire bits
+       13 ports
+     1130 port bits
+     3059 cells
+      577   AND2x1
+       24   AND3x1
+       15   AND4x1
+       14   AOI21x1
+       16   AOI221x1
+       11   AOI22x1
+        1   AOI311x1
+        8   AOI31x1
+      564   DFFHQNx1
+     1095   INVx1
+      535   MUX2x1
+       54   NAND2x1
+       26   NAND3x1
+       13   NAND4x1
+        4   NOR2x1
+        2   NOR3x1
+        2   NOR4x1
+       22   OAI21x1
+       25   OAI221x1
+        4   OAI22x1
+       16   OAI31x1
+        6   OR2x1
+        2   OR3x1
+        2   OR4x1
+       13   XNOR2x1
+        7   XNOR3x1
+        1   XOR2x1
+
+=== ring_noc ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     6580 wires
+   112078 wire bits
+      264 public wires
+   105762 public wire bits
+        8 ports
+    35234 port bits
+    41536 cells
+     8245   AND2x1
+    12124   AND3x1
+     7675   AND4x1
+     2218   AOI21x1
+        1   AOI221x1
+        6   AOI311x1
+        4   AOI31x1
+     6173   INVx1
+       39   MUX2x1
+       25   NAND2x1
+       20   NAND3x1
+        4   NAND4x1
+     1106   NOR2x1
+     2745   NOR3x1
+     1098   NOR4x1
+       20   OAI21x1
+        2   OAI311x1
+        2   OAI31x1
+       21   OR2x1
+        6   OR3x1
+        2   OR4x1
+       32 submodules
+        2   $paramod\ring_router\NODE_ID=4'0000
+        2   $paramod\ring_router\NODE_ID=4'0001
+        2   $paramod\ring_router\NODE_ID=4'0010
+        2   $paramod\ring_router\NODE_ID=4'0011
+        2   $paramod\ring_router\NODE_ID=4'0100
+        2   $paramod\ring_router\NODE_ID=4'0101
+        2   $paramod\ring_router\NODE_ID=4'0110
+        2   $paramod\ring_router\NODE_ID=4'0111
+        2   $paramod\ring_router\NODE_ID=4'1000
+        2   $paramod\ring_router\NODE_ID=4'1001
+        2   $paramod\ring_router\NODE_ID=4'1010
+        2   $paramod\ring_router\NODE_ID=4'1011
+        2   $paramod\ring_router\NODE_ID=4'1100
+        2   $paramod\ring_router\NODE_ID=4'1101
+        2   $paramod\ring_router\NODE_ID=4'1110
+        2   $paramod\ring_router\NODE_ID=4'1111
+
+=== $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0000 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     1606 wires
+     5387 wire bits
+       23 public wires
+     3804 public wire bits
+       17 ports
+     2754 port bits
+     2108 cells
+      525   AND4x1
+      524   AOI31x1
+        7   INVx1
+      524   NAND2x1
+      525   NAND3x1
+        2   NAND4x1
+        1   NOR2x1
+        2 submodules
+        1   $paramod$5cd899e5ee4aed9f430e46cebb03ce403cbb1c8a\sram_2r1w
+        1   $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0000
+
+   Area for cell type \mobol_sram_4096x512_2r1w is unknown!
+
+=== $paramod\ring_router\NODE_ID=4'0001 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     8835 wires
+    12678 wire bits
+       16 public wires
+     3859 public wire bits
+       16 ports
+     3859 port bits
+    10469 cells
+     1100   AND2x1
+        2   AND3x1
+        3   AND4x1
+        1   AOI21x1
+        2   AOI311x1
+     1100   DFFHQNx1
+     2206   INVx1
+     1105   NAND2x1
+     1648   NAND3x1
+      554   NAND4x1
+     1100   OAI21x1
+      545   OAI22x1
+        2   OAI311x1
+     1101   OAI31x1
+
+=== $paramod\ring_router\NODE_ID=4'0010 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     8835 wires
+    12678 wire bits
+       16 public wires
+     3859 public wire bits
+       16 ports
+     3859 port bits
+    10469 cells
+     1100   AND2x1
+        2   AND3x1
+        3   AND4x1
+        1   AOI21x1
+        2   AOI311x1
+     1100   DFFHQNx1
+     2206   INVx1
+     1105   NAND2x1
+     1648   NAND3x1
+      554   NAND4x1
+     1100   OAI21x1
+      545   OAI22x1
+        2   OAI311x1
+     1101   OAI31x1
+
+=== $paramod\ring_router\NODE_ID=4'0011 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     9382 wires
+    13225 wire bits
+       16 public wires
+     3859 public wire bits
+       16 ports
+     3859 port bits
+    11016 cells
+     1102   AND2x1
+        3   AND3x1
+        2   AND4x1
+        3   AOI21x1
+        2   AOI311x1
+     1100   DFFHQNx1
+     2207   INVx1
+     1103   NAND2x1
+     2193   NAND3x1
+      553   NAND4x1
+        2   NOR2x1
+     1644   OAI21x1
+      550   OAI311x1
+      552   OAI31x1
+
+=== $paramod\ring_router\NODE_ID=4'0100 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     9378 wires
+    13221 wire bits
+       16 public wires
+     3859 public wire bits
+       16 ports
+     3859 port bits
+    11012 cells
+     1103   AND2x1
+        4   AND3x1
+        4   AOI21x1
+        2   AOI311x1
+     1100   DFFHQNx1
+     1108   INVx1
+     3291   NAND2x1
+     2200   NAND3x1
+      551   NAND4x1
+      551   OAI21x1
+        1   OAI221x1
+     1097   OAI31x1
+
+=== $paramod\ring_router\NODE_ID=4'0101 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     9378 wires
+    13221 wire bits
+       16 public wires
+     3859 public wire bits
+       16 ports
+     3859 port bits
+    11012 cells
+     1105   AND2x1
+        2   AND4x1
+        3   AOI21x1
+        2   AOI311x1
+     1100   DFFHQNx1
+     1108   INVx1
+     3291   NAND2x1
+     2200   NAND3x1
+      551   NAND4x1
+        2   NOR2x1
+      552   OAI21x1
+        1   OAI221x1
+     1095   OAI31x1
+
+=== $paramod\ring_router\NODE_ID=4'0110 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     9378 wires
+    13221 wire bits
+       16 public wires
+     3859 public wire bits
+       16 ports
+     3859 port bits
+    11012 cells
+     1107   AND2x1
+        2   AND4x1
+        3   AOI21x1
+        2   AOI311x1
+     1100   DFFHQNx1
+     1108   INVx1
+     3291   NAND2x1
+     2200   NAND3x1
+      551   NAND4x1
+      552   OAI21x1
+        1   OAI221x1
+     1095   OAI31x1
+
+=== $paramod\ring_router\NODE_ID=4'0111 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     9380 wires
+    13223 wire bits
+       16 public wires
+     3859 public wire bits
+       16 ports
+     3859 port bits
+    11014 cells
+     1107   AND2x1
+        2   AND4x1
+        3   AOI21x1
+        2   AOI311x1
+     1100   DFFHQNx1
+     1108   INVx1
+     3293   NAND2x1
+     2200   NAND3x1
+      549   NAND4x1
+        2   NOR2x1
+      552   OAI21x1
+        1   OAI221x1
+     1095   OAI31x1
+
+=== $paramod\ring_router\NODE_ID=4'1000 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     9799 wires
+    13642 wire bits
+       16 public wires
+     3859 public wire bits
+       16 ports
+     3859 port bits
+    11433 cells
+     1104   AND2x1
+        7   AND3x1
+        2   AND4x1
+        5   AOI21x1
+        2   AOI311x1
+     1100   DFFHQNx1
+     1110   INVx1
+     3160   NAND2x1
+     3156   NAND3x1
+      551   NAND4x1
+      551   OAI21x1
+        1   OAI221x1
+        1   OAI311x1
+      683   OAI31x1
+
+=== $paramod\ring_router\NODE_ID=4'1001 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     9378 wires
+    13221 wire bits
+       16 public wires
+     3859 public wire bits
+       16 ports
+     3859 port bits
+    11012 cells
+     1105   AND2x1
+        2   AND4x1
+        3   AOI21x1
+        2   AOI311x1
+     1100   DFFHQNx1
+     1108   INVx1
+     3291   NAND2x1
+     2200   NAND3x1
+      551   NAND4x1
+        2   NOR2x1
+      552   OAI21x1
+        1   OAI221x1
+     1095   OAI31x1
+
+=== $paramod\ring_router\NODE_ID=4'1010 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     9378 wires
+    13221 wire bits
+       16 public wires
+     3859 public wire bits
+       16 ports
+     3859 port bits
+    11012 cells
+     1107   AND2x1
+        2   AND4x1
+        3   AOI21x1
+        2   AOI311x1
+     1100   DFFHQNx1
+     1108   INVx1
+     3291   NAND2x1
+     2200   NAND3x1
+      551   NAND4x1
+      552   OAI21x1
+        1   OAI221x1
+     1095   OAI31x1
+
+=== $paramod\ring_router\NODE_ID=4'1011 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     9380 wires
+    13223 wire bits
+       16 public wires
+     3859 public wire bits
+       16 ports
+     3859 port bits
+    11014 cells
+     1107   AND2x1
+        2   AND4x1
+        3   AOI21x1
+        2   AOI311x1
+     1100   DFFHQNx1
+     1108   INVx1
+     3293   NAND2x1
+     2200   NAND3x1
+      549   NAND4x1
+        2   NOR2x1
+      552   OAI21x1
+        1   OAI221x1
+     1095   OAI31x1
+
+=== $paramod\ring_router\NODE_ID=4'1100 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     9378 wires
+    13221 wire bits
+       16 public wires
+     3859 public wire bits
+       16 ports
+     3859 port bits
+    11012 cells
+     1107   AND2x1
+        2   AND4x1
+        3   AOI21x1
+        2   AOI311x1
+     1100   DFFHQNx1
+     1108   INVx1
+     3291   NAND2x1
+     2200   NAND3x1
+      551   NAND4x1
+      552   OAI21x1
+        1   OAI221x1
+     1095   OAI31x1
+
+=== $paramod\ring_router\NODE_ID=4'1101 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     9382 wires
+    13225 wire bits
+       16 public wires
+     3859 public wire bits
+       16 ports
+     3859 port bits
+    11016 cells
+     1109   AND2x1
+        2   AND4x1
+        3   AOI21x1
+        2   AOI311x1
+     1100   DFFHQNx1
+     1108   INVx1
+     3295   NAND2x1
+     2198   NAND3x1
+      549   NAND4x1
+        2   NOR2x1
+      552   OAI21x1
+        1   OAI221x1
+     1095   OAI31x1
+
+=== $paramod\ring_router\NODE_ID=4'1110 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     9380 wires
+    13223 wire bits
+       16 public wires
+     3859 public wire bits
+       16 ports
+     3859 port bits
+    11014 cells
+     1107   AND2x1
+        2   AND4x1
+        3   AOI21x1
+        2   AOI311x1
+     1100   DFFHQNx1
+     1108   INVx1
+     3293   NAND2x1
+     2197   NAND3x1
+      552   NAND4x1
+        2   NOR2x1
+      552   OAI21x1
+        1   OAI221x1
+     1095   OAI31x1
+
+=== $paramod\ring_router\NODE_ID=4'1111 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     9925 wires
+    13768 wire bits
+       16 public wires
+     3859 public wire bits
+       16 ports
+     3859 port bits
+    11559 cells
+     1103   AND2x1
+        2   AND3x1
+        2   AND4x1
+        4   AOI21x1
+        3   AOI311x1
+     1100   DFFHQNx1
+     1106   INVx1
+     3289   NAND2x1
+     3840   NAND3x1
+        1   NAND4x1
+        2   NOR3x1
+        2   NOR4x1
+      550   OAI21x1
+        1   OAI221x1
+      551   OAI311x1
+        1   OR2x1
+        2   OR3x1
+
+=== noc_tile_sys ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       18 wires
+    44050 wire bits
+       18 public wires
+    44050 public wire bits
+       13 ports
+    17618 port bits
+       17 submodules
+        1   $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0000
+        1   $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0001
+        1   $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0010
+        1   $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0011
+        1   $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0100
+        1   $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0101
+        1   $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0110
+        1   $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0111
+        1   $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1000
+        1   $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1001
+        1   $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1010
+        1   $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1011
+        1   $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1100
+        1   $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1101
+        1   $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1110
+        1   $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1111
+        1   ring_noc
+
+   Area for cell type \mobol_sram_4096x512_2r1w is unknown!
+
+=== $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0001 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     2519 wires
+     3636 wire bits
+       13 public wires
+     1130 public wire bits
+       13 ports
+     1130 port bits
+     3055 cells
+      580   AND2x1
+       24   AND3x1
+       15   AND4x1
+       13   AOI21x1
+       15   AOI221x1
+        1   AOI222x1
+        9   AOI22x1
+        1   AOI311x1
+        9   AOI31x1
+      564   DFFHQNx1
+     1095   INVx1
+      535   MUX2x1
+       53   NAND2x1
+       24   NAND3x1
+       14   NAND4x1
+        5   NOR2x1
+        1   NOR3x1
+        2   NOR4x1
+       21   OAI21x1
+       23   OAI221x1
+        1   OAI222x1
+        6   OAI22x1
+       14   OAI31x1
+        8   OR2x1
+        1   OR3x1
+        2   OR4x1
+       10   XNOR2x1
+        8   XNOR3x1
+        1   XOR2x1
+
+=== $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0010 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     2537 wires
+     3654 wire bits
+       13 public wires
+     1130 public wire bits
+       13 ports
+     1130 port bits
+     3073 cells
+      594   AND2x1
+       11   AND3x1
+       18   AND4x1
+       14   AOI21x1
+        3   AOI221x1
+        1   AOI222x1
+        8   AOI31x1
+      564   DFFHQNx1
+     1095   INVx1
+      544   MUX2x1
+       83   NAND2x1
+       22   NAND3x1
+       16   NAND4x1
+        2   NOR2x1
+        1   NOR3x1
+        2   NOR4x1
+       36   OAI21x1
+        2   OAI221x1
+        1   OAI22x1
+        2   OAI311x1
+       22   OAI31x1
+        4   OR2x1
+        2   OR3x1
+        2   OR4x1
+       16   XNOR2x1
+        8   XNOR3x1
+
+=== $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0011 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     2523 wires
+     3640 wire bits
+       13 public wires
+     1130 public wire bits
+       13 ports
+     1130 port bits
+     3059 cells
+      578   AND2x1
+       26   AND3x1
+       16   AND4x1
+       13   AOI21x1
+       16   AOI221x1
+       11   AOI22x1
+        1   AOI311x1
+       10   AOI31x1
+      564   DFFHQNx1
+     1095   INVx1
+      534   MUX2x1
+       54   NAND2x1
+       25   NAND3x1
+       12   NAND4x1
+        4   NOR2x1
+        2   NOR3x1
+        2   NOR4x1
+       22   OAI21x1
+       25   OAI221x1
+        4   OAI22x1
+       16   OAI31x1
+        7   OR2x1
+        2   OR3x1
+        2   OR4x1
+        9   XNOR2x1
+        8   XNOR3x1
+        1   XOR2x1
+
+=== $paramod\ring_router\NODE_ID=4'0000 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     9381 wires
+    13224 wire bits
+       16 public wires
+     3859 public wire bits
+       16 ports
+     3859 port bits
+    11015 cells
+     1103   AND2x1
+        3   AND3x1
+        2   AND4x1
+        6   AOI21x1
+        2   AOI311x1
+     1100   DFFHQNx1
+     1108   INVx1
+     3290   NAND2x1
+     2199   NAND3x1
+      551   NAND4x1
+      554   OAI21x1
+        1   OAI221x1
+     1095   OAI31x1
+        1   OR2x1
+
+=== $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0100 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     2550 wires
+     3667 wire bits
+       13 public wires
+     1130 public wire bits
+       13 ports
+     1130 port bits
+     3086 cells
+      598   AND2x1
+       10   AND3x1
+       20   AND4x1
+       16   AOI21x1
+        2   AOI221x1
+        1   AOI222x1
+        8   AOI31x1
+      564   DFFHQNx1
+     1098   INVx1
+      544   MUX2x1
+       85   NAND2x1
+       25   NAND3x1
+       16   NAND4x1
+        2   NOR2x1
+        1   NOR3x1
+        2   NOR4x1
+       36   OAI21x1
+        1   OAI221x1
+        1   OAI22x1
+        2   OAI311x1
+       21   OAI31x1
+        5   OR2x1
+        2   OR3x1
+        2   OR4x1
+       16   XNOR2x1
+        8   XNOR3x1
+
+=== design hierarchy ===
+
+        +----------Count including submodules.
+        | 
+   476443 noc_tile_sys
+     2108 $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0000
+        1   $paramod$5cd899e5ee4aed9f430e46cebb03ce403cbb1c8a\sram_2r1w
+     3059   $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0000
+     2108 $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0001
+        1   $paramod$5cd899e5ee4aed9f430e46cebb03ce403cbb1c8a\sram_2r1w
+     3055   $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0001
+     2108 $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0010
+        1   $paramod$5cd899e5ee4aed9f430e46cebb03ce403cbb1c8a\sram_2r1w
+     3073   $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0010
+     2108 $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0011
+        1   $paramod$5cd899e5ee4aed9f430e46cebb03ce403cbb1c8a\sram_2r1w
+     3059   $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0011
+     2108 $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0100
+        1   $paramod$5cd899e5ee4aed9f430e46cebb03ce403cbb1c8a\sram_2r1w
+     3086   $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0100
+     2108 $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0101
+        1   $paramod$5cd899e5ee4aed9f430e46cebb03ce403cbb1c8a\sram_2r1w
+     3059   $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0101
+     2108 $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0110
+        1   $paramod$5cd899e5ee4aed9f430e46cebb03ce403cbb1c8a\sram_2r1w
+     3059   $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0110
+     2108 $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0111
+        1   $paramod$5cd899e5ee4aed9f430e46cebb03ce403cbb1c8a\sram_2r1w
+     3059   $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0111
+     2108 $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1000
+        1   $paramod$5cd899e5ee4aed9f430e46cebb03ce403cbb1c8a\sram_2r1w
+     3059   $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1000
+     2108 $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1001
+        1   $paramod$5cd899e5ee4aed9f430e46cebb03ce403cbb1c8a\sram_2r1w
+     3059   $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1001
+     2108 $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1010
+        1   $paramod$5cd899e5ee4aed9f430e46cebb03ce403cbb1c8a\sram_2r1w
+     3059   $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1010
+     2108 $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1011
+        1   $paramod$5cd899e5ee4aed9f430e46cebb03ce403cbb1c8a\sram_2r1w
+     3059   $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1011
+     2108 $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1100
+        1   $paramod$5cd899e5ee4aed9f430e46cebb03ce403cbb1c8a\sram_2r1w
+     3059   $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1100
+     2108 $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1101
+        1   $paramod$5cd899e5ee4aed9f430e46cebb03ce403cbb1c8a\sram_2r1w
+     3059   $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1101
+     2108 $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1110
+        1   $paramod$5cd899e5ee4aed9f430e46cebb03ce403cbb1c8a\sram_2r1w
+     3059   $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1110
+     2108 $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1111
+        1   $paramod$5cd899e5ee4aed9f430e46cebb03ce403cbb1c8a\sram_2r1w
+     3059   $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1111
+    41536 ring_noc
+    11015   $paramod\ring_router\NODE_ID=4'0000
+    10469   $paramod\ring_router\NODE_ID=4'0001
+    10469   $paramod\ring_router\NODE_ID=4'0010
+    11016   $paramod\ring_router\NODE_ID=4'0011
+    11012   $paramod\ring_router\NODE_ID=4'0100
+    11012   $paramod\ring_router\NODE_ID=4'0101
+    11012   $paramod\ring_router\NODE_ID=4'0110
+    11014   $paramod\ring_router\NODE_ID=4'0111
+    11433   $paramod\ring_router\NODE_ID=4'1000
+    11012   $paramod\ring_router\NODE_ID=4'1001
+    11012   $paramod\ring_router\NODE_ID=4'1010
+    11014   $paramod\ring_router\NODE_ID=4'1011
+    11012   $paramod\ring_router\NODE_ID=4'1100
+    11016   $paramod\ring_router\NODE_ID=4'1101
+    11014   $paramod\ring_router\NODE_ID=4'1110
+    11559   $paramod\ring_router\NODE_ID=4'1111
+
+        +----------Count including submodules.
+        | 
+   372721 wires
+   748651 wire bits
+     1498 public wires
+   377428 public wire bits
+     1141 ports
+   263668 port bits
+        - memories
+        - memory bits
+        - processes
+   476443 cells
+    52871   AND2x1
+    12529   AND3x1
+    16388   AND4x1
+     2544   AOI21x1
+      229   AOI221x1
+        3   AOI222x1
+      152   AOI22x1
+       86   AOI311x1
+     8519   AOI31x1
+    44224   DFFHQNx1
+    65854   INVx1
+     8616   MUX2x1
+   101276   NAND2x1
+    82186   NAND3x1
+    16788   NAND4x1
+     1211   NOR2x1
+     2778   NOR3x1
+     1134   NOR4x1
+    22435   OAI21x1
+      377   OAI221x1
+        1   OAI222x1
+     2240   OAI22x1
+     2218   OAI311x1
+    31235   OAI31x1
+      121   OR2x1
+       41   OR3x1
+       34   OR4x1
+      207   XNOR2x1
+      116   XNOR3x1
+       14   XOR2x1
+       16   mobol_sram_4096x512_2r1w
+       17 submodules
+        1   $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0000
+        1   $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0001
+        1   $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0010
+        1   $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0011
+        1   $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0100
+        1   $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0101
+        1   $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0110
+        1   $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0111
+        1   $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1000
+        1   $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1001
+        1   $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1010
+        1   $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1011
+        1   $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1100
+        1   $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1101
+        1   $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1110
+        1   $paramod\tile_node\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'1111
+        1   ring_noc
+
+   Area for cell type \mobol_sram_4096x512_2r1w is unknown!
+
+
+SRAM macro area (from fakeram .lib, not visible to stat above):
+  16 x mobol_sram_4096x512_2r1w @ 139156.940 um^2 =  2.227 mm^2

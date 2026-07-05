@@ -1,0 +1,534 @@
+
+11. Printing statistics.
+
+=== $paramod\ring_router\NODE_ID=4'0001 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     8835 wires
+    12678 wire bits
+       16 public wires
+     3859 public wire bits
+       16 ports
+     3859 port bits
+    10469 cells
+     1100   AND2x1
+        2   AND3x1
+        3   AND4x1
+        1   AOI21x1
+        2   AOI311x1
+     1100   DFFHQNx1
+     2206   INVx1
+     1105   NAND2x1
+     1648   NAND3x1
+      554   NAND4x1
+     1100   OAI21x1
+      545   OAI22x1
+        2   OAI311x1
+     1101   OAI31x1
+
+=== $paramod\ring_router\NODE_ID=4'0010 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     8835 wires
+    12678 wire bits
+       16 public wires
+     3859 public wire bits
+       16 ports
+     3859 port bits
+    10469 cells
+     1100   AND2x1
+        2   AND3x1
+        3   AND4x1
+        1   AOI21x1
+        2   AOI311x1
+     1100   DFFHQNx1
+     2206   INVx1
+     1105   NAND2x1
+     1648   NAND3x1
+      554   NAND4x1
+     1100   OAI21x1
+      545   OAI22x1
+        2   OAI311x1
+     1101   OAI31x1
+
+=== $paramod\ring_router\NODE_ID=4'0011 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     9382 wires
+    13225 wire bits
+       16 public wires
+     3859 public wire bits
+       16 ports
+     3859 port bits
+    11016 cells
+     1102   AND2x1
+        3   AND3x1
+        2   AND4x1
+        3   AOI21x1
+        2   AOI311x1
+     1100   DFFHQNx1
+     2207   INVx1
+     1103   NAND2x1
+     2193   NAND3x1
+      553   NAND4x1
+        2   NOR2x1
+     1644   OAI21x1
+      550   OAI311x1
+      552   OAI31x1
+
+=== $paramod\ring_router\NODE_ID=4'0100 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     9378 wires
+    13221 wire bits
+       16 public wires
+     3859 public wire bits
+       16 ports
+     3859 port bits
+    11012 cells
+     1103   AND2x1
+        4   AND3x1
+        4   AOI21x1
+        2   AOI311x1
+     1100   DFFHQNx1
+     1108   INVx1
+     3291   NAND2x1
+     2200   NAND3x1
+      551   NAND4x1
+      551   OAI21x1
+        1   OAI221x1
+     1097   OAI31x1
+
+=== $paramod\ring_router\NODE_ID=4'0101 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     9378 wires
+    13221 wire bits
+       16 public wires
+     3859 public wire bits
+       16 ports
+     3859 port bits
+    11012 cells
+     1105   AND2x1
+        2   AND4x1
+        3   AOI21x1
+        2   AOI311x1
+     1100   DFFHQNx1
+     1108   INVx1
+     3291   NAND2x1
+     2200   NAND3x1
+      551   NAND4x1
+        2   NOR2x1
+      552   OAI21x1
+        1   OAI221x1
+     1095   OAI31x1
+
+=== $paramod\ring_router\NODE_ID=4'0110 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     9378 wires
+    13221 wire bits
+       16 public wires
+     3859 public wire bits
+       16 ports
+     3859 port bits
+    11012 cells
+     1107   AND2x1
+        2   AND4x1
+        3   AOI21x1
+        2   AOI311x1
+     1100   DFFHQNx1
+     1108   INVx1
+     3291   NAND2x1
+     2200   NAND3x1
+      551   NAND4x1
+      552   OAI21x1
+        1   OAI221x1
+     1095   OAI31x1
+
+=== $paramod\ring_router\NODE_ID=4'0111 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     9380 wires
+    13223 wire bits
+       16 public wires
+     3859 public wire bits
+       16 ports
+     3859 port bits
+    11014 cells
+     1107   AND2x1
+        2   AND4x1
+        3   AOI21x1
+        2   AOI311x1
+     1100   DFFHQNx1
+     1108   INVx1
+     3293   NAND2x1
+     2200   NAND3x1
+      549   NAND4x1
+        2   NOR2x1
+      552   OAI21x1
+        1   OAI221x1
+     1095   OAI31x1
+
+=== $paramod\ring_router\NODE_ID=4'1000 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     9799 wires
+    13642 wire bits
+       16 public wires
+     3859 public wire bits
+       16 ports
+     3859 port bits
+    11433 cells
+     1104   AND2x1
+        7   AND3x1
+        2   AND4x1
+        5   AOI21x1
+        2   AOI311x1
+     1100   DFFHQNx1
+     1110   INVx1
+     3160   NAND2x1
+     3156   NAND3x1
+      551   NAND4x1
+      551   OAI21x1
+        1   OAI221x1
+        1   OAI311x1
+      683   OAI31x1
+
+=== $paramod\ring_router\NODE_ID=4'1001 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     9378 wires
+    13221 wire bits
+       16 public wires
+     3859 public wire bits
+       16 ports
+     3859 port bits
+    11012 cells
+     1105   AND2x1
+        2   AND4x1
+        3   AOI21x1
+        2   AOI311x1
+     1100   DFFHQNx1
+     1108   INVx1
+     3291   NAND2x1
+     2200   NAND3x1
+      551   NAND4x1
+        2   NOR2x1
+      552   OAI21x1
+        1   OAI221x1
+     1095   OAI31x1
+
+=== $paramod\ring_router\NODE_ID=4'1010 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     9378 wires
+    13221 wire bits
+       16 public wires
+     3859 public wire bits
+       16 ports
+     3859 port bits
+    11012 cells
+     1107   AND2x1
+        2   AND4x1
+        3   AOI21x1
+        2   AOI311x1
+     1100   DFFHQNx1
+     1108   INVx1
+     3291   NAND2x1
+     2200   NAND3x1
+      551   NAND4x1
+      552   OAI21x1
+        1   OAI221x1
+     1095   OAI31x1
+
+=== $paramod\ring_router\NODE_ID=4'1011 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     9380 wires
+    13223 wire bits
+       16 public wires
+     3859 public wire bits
+       16 ports
+     3859 port bits
+    11014 cells
+     1107   AND2x1
+        2   AND4x1
+        3   AOI21x1
+        2   AOI311x1
+     1100   DFFHQNx1
+     1108   INVx1
+     3293   NAND2x1
+     2200   NAND3x1
+      549   NAND4x1
+        2   NOR2x1
+      552   OAI21x1
+        1   OAI221x1
+     1095   OAI31x1
+
+=== $paramod\ring_router\NODE_ID=4'1100 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     9378 wires
+    13221 wire bits
+       16 public wires
+     3859 public wire bits
+       16 ports
+     3859 port bits
+    11012 cells
+     1107   AND2x1
+        2   AND4x1
+        3   AOI21x1
+        2   AOI311x1
+     1100   DFFHQNx1
+     1108   INVx1
+     3291   NAND2x1
+     2200   NAND3x1
+      551   NAND4x1
+      552   OAI21x1
+        1   OAI221x1
+     1095   OAI31x1
+
+=== $paramod\ring_router\NODE_ID=4'1101 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     9382 wires
+    13225 wire bits
+       16 public wires
+     3859 public wire bits
+       16 ports
+     3859 port bits
+    11016 cells
+     1109   AND2x1
+        2   AND4x1
+        3   AOI21x1
+        2   AOI311x1
+     1100   DFFHQNx1
+     1108   INVx1
+     3295   NAND2x1
+     2198   NAND3x1
+      549   NAND4x1
+        2   NOR2x1
+      552   OAI21x1
+        1   OAI221x1
+     1095   OAI31x1
+
+=== $paramod\ring_router\NODE_ID=4'1110 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     9380 wires
+    13223 wire bits
+       16 public wires
+     3859 public wire bits
+       16 ports
+     3859 port bits
+    11014 cells
+     1107   AND2x1
+        2   AND4x1
+        3   AOI21x1
+        2   AOI311x1
+     1100   DFFHQNx1
+     1108   INVx1
+     3293   NAND2x1
+     2197   NAND3x1
+      552   NAND4x1
+        2   NOR2x1
+      552   OAI21x1
+        1   OAI221x1
+     1095   OAI31x1
+
+=== $paramod\ring_router\NODE_ID=4'1111 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     9925 wires
+    13768 wire bits
+       16 public wires
+     3859 public wire bits
+       16 ports
+     3859 port bits
+    11559 cells
+     1103   AND2x1
+        2   AND3x1
+        2   AND4x1
+        4   AOI21x1
+        3   AOI311x1
+     1100   DFFHQNx1
+     1106   INVx1
+     3289   NAND2x1
+     3840   NAND3x1
+        1   NAND4x1
+        2   NOR3x1
+        2   NOR4x1
+      550   OAI21x1
+        1   OAI221x1
+      551   OAI311x1
+        1   OR2x1
+        2   OR3x1
+
+=== $paramod\ring_router\NODE_ID=4'0000 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     9381 wires
+    13224 wire bits
+       16 public wires
+     3859 public wire bits
+       16 ports
+     3859 port bits
+    11015 cells
+     1103   AND2x1
+        3   AND3x1
+        2   AND4x1
+        6   AOI21x1
+        2   AOI311x1
+     1100   DFFHQNx1
+     1108   INVx1
+     3290   NAND2x1
+     2199   NAND3x1
+      551   NAND4x1
+      554   OAI21x1
+        1   OAI221x1
+     1095   OAI31x1
+        1   OR2x1
+
+=== ring_noc ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     6040 wires
+   111538 wire bits
+      264 public wires
+   105762 public wire bits
+        8 ports
+    35234 port bits
+    40996 cells
+     8794   AND2x1
+    12124   AND3x1
+     7674   AND4x1
+     2218   AOI21x1
+        2   AOI221x1
+        6   AOI311x1
+        4   AOI31x1
+     5626   INVx1
+       38   MUX2x1
+       26   NAND2x1
+       20   NAND3x1
+        4   NAND4x1
+     1108   NOR2x1
+     2198   NOR3x1
+     1098   NOR4x1
+       22   OAI21x1
+        2   OAI311x1
+        2   OAI31x1
+       22   OR2x1
+        6   OR3x1
+        2   OR4x1
+       32 submodules
+        2   $paramod\ring_router\NODE_ID=4'0000
+        2   $paramod\ring_router\NODE_ID=4'0001
+        2   $paramod\ring_router\NODE_ID=4'0010
+        2   $paramod\ring_router\NODE_ID=4'0011
+        2   $paramod\ring_router\NODE_ID=4'0100
+        2   $paramod\ring_router\NODE_ID=4'0101
+        2   $paramod\ring_router\NODE_ID=4'0110
+        2   $paramod\ring_router\NODE_ID=4'0111
+        2   $paramod\ring_router\NODE_ID=4'1000
+        2   $paramod\ring_router\NODE_ID=4'1001
+        2   $paramod\ring_router\NODE_ID=4'1010
+        2   $paramod\ring_router\NODE_ID=4'1011
+        2   $paramod\ring_router\NODE_ID=4'1100
+        2   $paramod\ring_router\NODE_ID=4'1101
+        2   $paramod\ring_router\NODE_ID=4'1110
+        2   $paramod\ring_router\NODE_ID=4'1111
+
+=== design hierarchy ===
+
+        +----------Count including submodules.
+        | 
+   393178 ring_noc
+    11015 $paramod\ring_router\NODE_ID=4'0000
+    10469 $paramod\ring_router\NODE_ID=4'0001
+    10469 $paramod\ring_router\NODE_ID=4'0010
+    11016 $paramod\ring_router\NODE_ID=4'0011
+    11012 $paramod\ring_router\NODE_ID=4'0100
+    11012 $paramod\ring_router\NODE_ID=4'0101
+    11012 $paramod\ring_router\NODE_ID=4'0110
+    11014 $paramod\ring_router\NODE_ID=4'0111
+    11433 $paramod\ring_router\NODE_ID=4'1000
+    11012 $paramod\ring_router\NODE_ID=4'1001
+    11012 $paramod\ring_router\NODE_ID=4'1010
+    11014 $paramod\ring_router\NODE_ID=4'1011
+    11012 $paramod\ring_router\NODE_ID=4'1100
+    11016 $paramod\ring_router\NODE_ID=4'1101
+    11014 $paramod\ring_router\NODE_ID=4'1110
+    11559 $paramod\ring_router\NODE_ID=4'1111
+
+        +----------Count including submodules.
+        | 
+   305934 wires
+   534408 wire bits
+      776 public wires
+   229250 public wire bits
+      520 ports
+   158722 port bits
+        - memories
+        - memory bits
+        - processes
+   393178 cells
+    44146   AND2x1
+    12170   AND3x1
+     7738   AND4x1
+     2320   AOI21x1
+        2   AOI221x1
+       72   AOI311x1
+        4   AOI31x1
+    35200   DFFHQNx1
+    47672   INVx1
+       38   MUX2x1
+    91970   NAND2x1
+    73378   NAND3x1
+    16542   NAND4x1
+     1136   NOR2x1
+     2202   NOR3x1
+     1102   NOR4x1
+    22058   OAI21x1
+       26   OAI221x1
+     2180   OAI22x1
+     2214   OAI311x1
+    30970   OAI31x1
+       26   OR2x1
+       10   OR3x1
+        2   OR4x1
+       32 submodules
+        2   $paramod\ring_router\NODE_ID=4'0000
+        2   $paramod\ring_router\NODE_ID=4'0001
+        2   $paramod\ring_router\NODE_ID=4'0010
+        2   $paramod\ring_router\NODE_ID=4'0011
+        2   $paramod\ring_router\NODE_ID=4'0100
+        2   $paramod\ring_router\NODE_ID=4'0101
+        2   $paramod\ring_router\NODE_ID=4'0110
+        2   $paramod\ring_router\NODE_ID=4'0111
+        2   $paramod\ring_router\NODE_ID=4'1000
+        2   $paramod\ring_router\NODE_ID=4'1001
+        2   $paramod\ring_router\NODE_ID=4'1010
+        2   $paramod\ring_router\NODE_ID=4'1011
+        2   $paramod\ring_router\NODE_ID=4'1100
+        2   $paramod\ring_router\NODE_ID=4'1101
+        2   $paramod\ring_router\NODE_ID=4'1110
+        2   $paramod\ring_router\NODE_ID=4'1111
+

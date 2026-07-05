@@ -1,0 +1,41 @@
+
+11. Printing statistics.
+
+=== prefetch_engine ===
+
+        +----------Local Count, excluding submodules.
+        | 
+    12065 wires
+    13335 wire bits
+       19 public wires
+     1289 public wire bits
+       19 ports
+     1289 port bits
+    12130 cells
+     1764   AND2x1
+     1104   AND3x1
+       67   AND4x1
+     1055   AOI21x1
+       12   AOI221x1
+       35   AOI22x1
+      132   AOI311x1
+       40   AOI31x1
+      103   DFFHQNx1
+      257   INVx1
+       79   MUX2x1
+     1765   NAND2x1
+     1090   NAND3x1
+       88   NAND4x1
+      117   NOR2x1
+       13   NOR3x1
+        1   NOR4x1
+     1005   OAI21x1
+       16   OAI221x1
+        8   OAI22x1
+      139   OAI311x1
+       55   OAI31x1
+       98   OR2x1
+       19   OR3x1
+     1734   XNOR2x1
+     1334   XNOR3x1
+

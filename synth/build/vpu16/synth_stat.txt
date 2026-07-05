@@ -1,0 +1,288 @@
+
+11. Printing statistics.
+
+=== fp32_recip ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       68 wires
+      626 wire bits
+       18 public wires
+      576 public wire bits
+        2 ports
+       64 port bits
+       85 cells
+        9   AND2x1
+        2   AND3x1
+        4   AND4x1
+        2   AOI21x1
+        1   AOI31x1
+       22   INVx1
+        5   NAND3x1
+        3   NAND4x1
+        2   NOR2x1
+        1   NOR3x1
+        2   OAI21x1
+        1   OAI31x1
+       31   XNOR2x1
+       12 submodules
+        4   fp32_add
+        8   fp32_mul
+
+=== fp32_rsqrt ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       68 wires
+      626 wire bits
+       18 public wires
+      576 public wire bits
+        2 ports
+       64 port bits
+       84 cells
+        9   AND2x1
+        5   AND3x1
+        2   AND4x1
+        2   AOI21x1
+        1   AOI311x1
+        3   AOI31x1
+       27   INVx1
+        1   NAND3x1
+        2   NAND4x1
+        2   OAI21x1
+        2   OAI311x1
+        3   OAI31x1
+       25   XNOR2x1
+       13 submodules
+        3   fp32_add
+       10   fp32_mul
+
+=== fp32_add ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     2794 wires
+     2887 wire bits
+        3 public wires
+       96 public wire bits
+        3 ports
+       96 port bits
+     2823 cells
+      229   AND2x1
+      104   AND3x1
+      184   AND4x1
+      189   AOI21x1
+       26   AOI221x1
+        2   AOI222x1
+       23   AOI22x1
+       29   AOI311x1
+       64   AOI31x1
+       65   INVx1
+      606   MUX2x1
+      241   NAND2x1
+      148   NAND3x1
+      124   NAND4x1
+       61   NOR2x1
+       22   NOR3x1
+       20   NOR4x1
+      184   OAI21x1
+       19   OAI221x1
+        2   OAI222x1
+       29   OAI22x1
+       23   OAI311x1
+       47   OAI31x1
+       52   OR2x1
+       25   OR3x1
+       11   OR4x1
+      282   XNOR2x1
+        4   XNOR3x1
+        8   XOR2x1
+
+=== fp32_mul ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     6285 wires
+     6378 wire bits
+        3 public wires
+       96 public wire bits
+        3 ports
+       96 port bits
+     6314 cells
+     1163   AND2x1
+      148   AND3x1
+      152   AND4x1
+      520   AOI21x1
+       15   AOI221x1
+      162   AOI22x1
+       24   AOI311x1
+       47   AOI31x1
+       50   INVx1
+       99   MUX2x1
+      966   NAND2x1
+      143   NAND3x1
+      220   NAND4x1
+      130   NOR2x1
+       21   NOR3x1
+       14   NOR4x1
+      611   OAI21x1
+       19   OAI221x1
+        9   OAI22x1
+       47   OAI311x1
+       41   OAI31x1
+      133   OR2x1
+       47   OR3x1
+      890   XNOR2x1
+      641   XNOR3x1
+        2   XOR2x1
+
+=== vpu16 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+    67728 wires
+    99371 wire bits
+      235 public wires
+    31847 public wire bits
+        9 ports
+    24615 port bits
+    76757 cells
+     1552   AND2x1
+      330   AND3x1
+      995   AND4x1
+      910   AOI21x1
+      174   AOI221x1
+     3005   AOI311x1
+     2915   AOI31x1
+     8714   DFFHQNx1
+    12949   INVx1
+      579   MUX2x1
+     9432   NAND2x1
+      520   NAND3x1
+    13930   NAND4x1
+        1   NOR2x1
+        2   NOR3x1
+       12   NOR4x1
+     7226   OAI21x1
+     2704   OAI221x1
+     2675   OAI311x1
+     5226   OAI31x1
+     2895   OR2x1
+        2   OR3x1
+        9   OR4x1
+      178 submodules
+       48   fp32_add
+       97   fp32_mul
+       16   fp32_recip
+        1   fp32_rsqrt
+       16   fp_exp2
+
+=== fp_exp2 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      786 wires
+     1282 wire bits
+       16 public wires
+      512 public wire bits
+        2 ports
+       64 port bits
+      864 cells
+       73   AND2x1
+       40   AND3x1
+       22   AND4x1
+       58   AOI21x1
+       29   AOI221x1
+        1   AOI222x1
+        1   AOI22x1
+       18   AOI311x1
+       23   AOI31x1
+       93   INVx1
+      116   MUX2x1
+       57   NAND2x1
+       61   NAND3x1
+       14   NAND4x1
+       31   NOR2x1
+        6   NOR3x1
+       15   NOR4x1
+       67   OAI21x1
+       28   OAI221x1
+        2   OAI222x1
+        3   OAI22x1
+       19   OAI311x1
+       17   OAI31x1
+       12   OR2x1
+        8   OR3x1
+       41   XNOR2x1
+        8   XNOR3x1
+        1   XOR2x1
+       12 submodules
+        7   fp32_add
+        5   fp32_mul
+
+=== design hierarchy ===
+
+        +----------Count including submodules.
+        | 
+  2721756 vpu16
+     2823 fp32_add
+     6314 fp32_mul
+       85 fp32_recip
+     2823   fp32_add
+     6314   fp32_mul
+       84 fp32_rsqrt
+     2823   fp32_add
+     6314   fp32_mul
+      864 fp_exp2
+     2823   fp32_add
+     6314   fp32_mul
+
+        +----------Count including submodules.
+        | 
+  2695473 wires
+  2794944 wire bits
+     2423 public wires
+   101863 public wire bits
+     1701 ports
+    78759 port bits
+        - memories
+        - memory bits
+        - processes
+  2721756 cells
+   421201   AND2x1
+    71235   AND3x1
+    91061   AND4x1
+   208575   AOI21x1
+    11265   AOI221x1
+      470   AOI222x1
+    56267   AOI22x1
+    17437   AOI311x1
+    32635   AOI31x1
+     8714   DFFHQNx1
+    45321   INVx1
+   171182   MUX2x1
+   369341   NAND2x1
+    80218   NAND3x1
+   111652   NAND4x1
+    55326   NOR2x1
+    11723   NOR3x1
+     9202   NOR4x1
+   242565   OAI21x1
+    13450   OAI221x1
+      486   OAI222x1
+     9466   OAI22x1
+    23007   OAI311x1
+    29101   OAI31x1
+    56786   OR2x1
+    20610   OR3x1
+     2506   OR4x1
+   345541   XNOR2x1
+   202951   XNOR3x1
+     2462   XOR2x1
+      178 submodules
+       48   fp32_add
+       97   fp32_mul
+       16   fp32_recip
+        1   fp32_rsqrt
+       16   fp_exp2
+

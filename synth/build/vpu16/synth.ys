@@ -1,0 +1,50 @@
+# synth.ys.in — Yosys synthesis recipe for the MOBOL RTL (USC-3N-2D PDK).
+#
+# Template placeholders (filled in by run_synth.sh):
+#   vpu16      top module           /Users/sjia/bupt_stamp/synth/build/vpu16   build directory
+#   /Users/sjia/bupt_stamp/synth/pdk/stdcell.lib  std-cell Liberty     /Users/sjia/bupt_stamp/synth/macros/mobol_sram_4096x512_2r1w/mobol_sram_4096x512_2r1w.bb.v SRAM black-box Verilog
+#
+# Flow: read libs -> read design -> blackbox SRAM -> generic synth ->
+#       legalize FFs for this PDK -> map to std cells -> netlist + report.
+
+# ── 1. standard-cell library ─────────────────────────────────────────────
+# -lib: import cells as black-box modules (timing/area used by abc & stat).
+read_liberty -lib /Users/sjia/bupt_stamp/synth/pdk/stdcell.lib
+
+# ── 2. SRAM macro library ────────────────────────────────────────────────
+# The SRAM port interface comes from the fakeram black-box Verilog below.
+# We intentionally do NOT read_liberty the SRAM .lib here as well: it would
+# re-define the same module and Yosys does not merge duplicate definitions.
+# The SRAM .lib/.lef are consumed by OpenSTA/OpenROAD in the backend flow.
+read_verilog /Users/sjia/bupt_stamp/synth/macros/mobol_sram_4096x512_2r1w/mobol_sram_4096x512_2r1w.bb.v
+
+# ── 3. design (sv2v-converted RTL, includes the sram_2r1w macro wrapper) ─
+read_verilog /Users/sjia/bupt_stamp/synth/build/vpu16/design.v
+
+# ── 4. black-box marking ─────────────────────────────────────────────────
+# The .bb.v already carries (* blackbox *); this setattr is belt-and-braces
+# so the macro can NEVER be dissolved into gates by later passes. The '='
+# prefix makes the selection include already-blackboxed modules.
+setattr -mod -set blackbox 1 =mobol_sram_4096x512_2r1w
+hierarchy -check -top vpu16
+
+# ── 5. generic synthesis (RTL -> optimized generic netlist) ──────────────
+synth -top vpu16
+
+# ── 6. flip-flop legalization for this PDK ───────────────────────────────
+# USC-3N-2D has only plain posedge D-FFs (DFFHx1 / DFFHQNx1) — no
+# async-set/reset cells. Convert the RTL's async rst_n into synchronous
+# logic, then rewrite every FF to the one supported type ($_DFF_P_).
+async2sync
+dfflegalize -cell $_DFF_P_ 01
+
+# ── 7. technology mapping ────────────────────────────────────────────────
+dfflibmap -liberty /Users/sjia/bupt_stamp/synth/pdk/stdcell.lib
+# -D 2000: 2 ns target period in library time units (1 ps) = 500 MHz clk.
+abc -D 2000 -liberty /Users/sjia/bupt_stamp/synth/pdk/stdcell.lib
+opt_clean -purge
+
+# ── 8. reports & gate-level netlist ──────────────────────────────────────
+tee -o /Users/sjia/bupt_stamp/synth/build/vpu16/synth_stat.txt stat -liberty /Users/sjia/bupt_stamp/synth/pdk/stdcell.lib
+check -noinit
+write_verilog -noattr -noexpr -nohex -nodec /Users/sjia/bupt_stamp/synth/build/vpu16/vpu16.gate.v

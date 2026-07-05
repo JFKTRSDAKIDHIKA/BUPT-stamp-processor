@@ -52,6 +52,37 @@ synth/
 6. **fakeram 行为模型的写 OR bug**（`mem[addr] <= wd | mem[addr]`，写掩码
    注释残留）由生成脚本自动修补，否则宏仿真必错。
 
+## 综合覆盖矩阵（8 个 top，全部经 QC 硬检查）
+
+| Top | 层级 | 内容 | 单元数（含子模块） | DFF（展平） | SRAM 宏（展平） |
+|:--|:--|:--|--:|--:|--:|
+| `noc_tile_sys` | **系统级（base die fabric）** | 16 × tile_node + 双向环 NoC（32 路由器、2 VC） | 476k | 44 224 | 16（2.23 mm²） |
+| `tile_top` | tile 集成 | Sequencer FSM + MXU(16³) + join 计数器 + LSP | 2.76M | 54 034 | 1 |
+| `tile_node` | tile 集成 | LSP + DMA 引擎 + NoC 注入/弹出 | 5.2k | 564 | 1 |
+| `ssp_bank` | buffer die | 8 MB SHARED bank（32 宏 + 解码/复用） | 39k | 10 | 32（4.45 mm²） |
+| `vpu16` | 计算单元 | 16-lane f32 VPU（含 exp2/recip/rsqrt 超越通路） | 2.72M | 8 714 | 0 |
+| `nmc_engine` | buffer die | 近存归约引擎（256 宽 f32 加法阵列 + 控制） | 768k | 8 204 | 0 |
+| `prefetch_engine` | buffer die | 权重流式预取 DMA（2D strided 地址生成） | 12k | 103 | 0 |
+| `ring_noc` | 互连 | 独立环网（含 ring_router 缓冲/仲裁） | 393k | 35 200 | 0 |
+
+展平计数来自 `scripts/count_cells.py`（网表层次 DAG 展开；`stat`/grep 只给
+每模块体内计数，对层次网表会严重低估——PnR 宏清点必须用展平数）。
+
+每个 `build/<top>/` 含：`design.v`（sv2v 后 RTL）、`synth.ys`、`yosys.log`、
+`synth_stat.txt`（含 SRAM 宏面积追加）、`<top>.gate.v`（门级网表）、
+`<top>.sdc`（OpenROAD 约束，500 MHz/2000 ps）。
+
+**QC 硬门槛**（run_synth.sh 内置，任一不过即退出非零）：
+0 个未映射 generic cell、0 个锁存器（DHLx1）、0 个 X 字面量、
+`yosys check` 0 problems。
+
+**集成边界（如实说明）**：RTL 中不存在单一 `base_die_top`——
+`tile_top`（计算集成）与 `noc_tile_sys`（fabric 集成）是两个已被
+Verilator TB 验证的最大集成点；把 MXU/VPU/join 挂进 tile_node 属于
+RTL 集成设计工作（sequencer 与 DMA/NoC 端口仲裁），不应在综合阶段
+临时拼接未验证的胶水逻辑。对 3D 堆叠芯片，推荐的 PnR 组织方式本来
+就是分层：tile / bank 分别 PnR 成硬宏，再做 die 级组装。
+
 ## 使用
 
 ```bash
@@ -61,6 +92,8 @@ make equiv             # Verilator 等价性验证（行为级 vs 宏级）
 make synth             # Yosys 综合 tile_top
 ./run_synth.sh <top>   # tile_top | tile_node | ssp_bank
 python3 scripts/sram_audit.py   # 审计 SRAM 使用与文件清单
+python3 scripts/count_cells.py build/<top>/<top>.gate.v <top> [type…]
+                                # 展平实例计数（宏/DFF/锁存器）
 ```
 
 ## 对接 OpenROAD
