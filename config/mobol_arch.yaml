@@ -1,0 +1,119 @@
+# ══════════════════════════════════════════════════════════════════════
+# MOBOL accelerator — unified architecture parameters (single source of truth)
+# ══════════════════════════════════════════════════════════════════════
+# Every microarchitectural knob of the chip lives here. The C++ simulator
+# loads it via src/cycle/arch_config.cpp; the Python compiler loads the same
+# file via tools/edgc/edgc/arch.py. CLI flags and a trace's inline .config
+# override individual fields at run time.
+#
+# `structural:` values (tile/bank counts, MXU native size) define array
+# sizes that are compile-time in the C++ build. The loader ASSERTS the YAML
+# matches the compiled build and errors loudly on mismatch — changing them
+# requires a rebuild (they are here as the documented single source, not a
+# runtime knob).
+
+structural:
+  num_tiles: 16          # compute tiles on the base die
+  num_banks: 4           # shared-scratchpad banks on the buffer die
+  tiles_per_group: 4     # tiles sharing one bank / one DRAM column
+  mxu_m: 16              # MXU native tile dimensions (M x N x K)
+  mxu_n: 16
+  mxu_k: 16
+
+# ─── Tile compute ─────────────────────────────────────────────────────
+tile:
+  mxu_latency: 4               # cycles from MXU issue to result commit
+  mxu_issue_interval: 1        # min cycles between MXU issues (II)
+  compute_uses_sram_ports: false  # MXU/VPU operands via dedicated latches (false)
+                                   # or contend on SRAM ports (true, sensitivity)
+
+# VPU (16 f32 lanes) latency table — cycles per 16x16 block op.
+vpu:
+  add_cycles: 16
+  convert_cycles: 16
+  transpose_cycles: 16
+  scale_cycles: 16
+  softmax_cycles: 128          # fused row softmax (max/exp/sum/div)
+  gelu_cycles: 32              # tanh-approx GELU
+  layernorm_cycles: 64         # per sub-block of a fused LayerNorm
+  mul_cycles: 16               # elementwise multiply
+  silu_cycles: 32              # SiLU / swish
+  rmsnorm_cycles: 48           # per block of a fused RMSNorm
+  rope_cycles: 24              # RoPE per head
+
+# ─── Local scratchpad (per tile) ──────────────────────────────────────
+local_sram:
+  rd_ports: 2                  # 64B reads / cycle
+  wr_ports: 1                  # 64B writes / cycle
+  port_width: 64               # bytes per port access
+
+# ─── Shared scratchpad (buffer-die banks) ─────────────────────────────
+shared_sram:
+  port_contention: false       # model per-bank port contention (else infinite)
+  rw_ports: 4                  # accesses/cycle when contention enabled
+
+# ─── NoC ring (base die) ──────────────────────────────────────────────
+noc:
+  flit_bytes: 64               # payload bytes per flit == link width
+  hop_latency: 1               # cycles per hop
+  buffer_depth: 4              # flits per router input buffer
+  inject_queue_depth: 16
+
+# ─── Vertical hybrid-bond links (3D) ──────────────────────────────────
+vbond:
+  latency: 1                   # cycles per vertical hop
+  queue_depth: 8               # flits buffered per tile-link endpoint
+  flits_per_cycle: 1           # tile<->bank link width (64 B/cycle each)
+  # bank<->DRAM column hybrid-bond density, the key 3D knob (64B flits/cycle):
+  #   1=512b  2=1024b  4=2048b  8=4096b  16=8192b  per column per cycle.
+  dram_flits_per_cycle: 4
+  dram_col_queue_depth: 64
+
+# ─── DMA engine (per tile) ────────────────────────────────────────────
+dma:
+  setup_cycles: 2
+  queue_depth: 16
+  max_inflight_chunks: 64      # bounded outstanding sub-transactions
+  chunks_per_cycle: 1          # emission rate (base-die consumption-port DSE)
+
+# ─── DRAM (3D-stacked die, driven by Ramulator2) ──────────────────────
+dram:
+  ramulator_config: config/ramulator_3d_dram.yaml  # REQUIRED device+timing model
+  txn_bytes: 32                # device access granularity (HBM3 core = 32 B)
+  ctrl_queue_depth: 64
+  issue_width: 8               # parallel channel issues per DRAM tick
+  ticks_per_logic: 3           # fallback only; real ratio comes from ramulator yaml
+
+# ─── Near-memory compute on the buffer die (paradigm C) ───────────────
+nmc:
+  enable: false
+  reduce_cycles_per_block: 16  # f32 add, 16x16 block
+  ln_cycles_per_block: 64      # layernorm slice
+  cvt_cycles_per_block: 16     # f32->f16 block
+  queue_depth: 4
+
+# ─── Sync ─────────────────────────────────────────────────────────────
+sync:
+  max_live_tags: 1024          # join-counter table capacity per tile
+
+# ─── Simulation control ───────────────────────────────────────────────
+sim:
+  max_cycles: 200000000
+  deadlock_window: 1000000     # abort if no progress for this many cycles
+  collect_trace: false
+
+# ══════════════════════════════════════════════════════════════════════
+# Compiler schedule defaults + DSE search space (read by tools/edgc)
+# ══════════════════════════════════════════════════════════════════════
+compiler:
+  default_sched: baseline
+  # Each schedule maps to CycleConfig overrides the compiler bakes into the
+  # emitted trace's .config line. tile_link/wr_ports/rd_ports/dma_rate widen
+  # the base-die consumption ports together (the W knob); dram_density is the
+  # vbond.dram_flits_per_cycle bits.
+  dse:
+    - {label: baseline, tile_link: 1, wr_ports: 1, rd_ports: 2, dma_rate: 1, dram_density: 2048, nmc: false}
+    - {label: W2,       tile_link: 2, wr_ports: 2, rd_ports: 4, dma_rate: 2, dram_density: 2048, nmc: false}
+    - {label: nmc,      tile_link: 1, wr_ports: 1, rd_ports: 2, dma_rate: 1, dram_density: 2048, nmc: true}
+    - {label: nmc+W2,   tile_link: 2, wr_ports: 2, rd_ports: 4, dma_rate: 2, dram_density: 2048, nmc: true}
+    - {label: dense8192, tile_link: 2, wr_ports: 2, rd_ports: 4, dma_rate: 2, dram_density: 8192, nmc: false}

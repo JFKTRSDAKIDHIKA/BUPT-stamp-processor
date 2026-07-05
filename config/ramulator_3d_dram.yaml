@@ -1,0 +1,48 @@
+# 3D-stacked DRAM die for the MOBOL accelerator.
+#
+# The DRAM die is hybrid-bonded directly on top of the buffer die — this
+# is NOT a planar-package DIMM. We model the stacked die's core with
+# Ramulator2's HBM3-class device (wide 128-bit channels, bank-group
+# parallelism, 2 Gbps core I/O):
+#   16 channels x HBM3_8Gb = 16 GB total (matches the MOBOL spec).
+#   Peak core bandwidth: 16 ch x 32 B / 2 ns (tCCDS) = 256 GB/s.
+#   Controller clock 1 GHz; base (logic) die 500 MHz => clock_ratio 2.
+# Consecutive 32 B lines interleave across channels (RoBaRaCoCh puts the
+# channel bits lowest), so all banks/channels work in parallel.
+#
+# The per-group vertical hybrid-bond density (bits per logic cycle per
+# column) is a separate DSE knob in the simulator: --dram-density.
+
+Frontend:
+  impl: GEM5
+
+MemorySystem:
+  impl: GenericDRAM
+  clock_ratio: 2
+
+  DRAM:
+    impl: HBM3
+    org:
+      preset: HBM3_8Gb
+      channel: 16
+    timing:
+      preset: HBM3_2Gbps
+
+  Controller:
+    impl: Generic
+    Scheduler:
+      impl: FRFCFS
+    # AllBankNoRank: our HBM-compatible refresh manager (the stock
+    # "AllBank" iterates a "rank" level HBM3 lacks and would silently
+    # skip all refreshes).
+    RefreshManager:
+      impl: AllBankNoRank
+    # OpenRowPolicy: ClosedRowPolicy assumes a "rank" level and is
+    # incompatible with the HBM3 device model (channel/pseudochannel/
+    # bankgroup/bank). Open-row also favors our streaming access pattern.
+    RowPolicy:
+      impl: OpenRowPolicy
+    plugins:
+
+  AddrMapper:
+    impl: RoBaRaCoCh

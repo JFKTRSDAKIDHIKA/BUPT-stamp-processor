@@ -1,0 +1,40 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -i '\\\\.md$')",
+      "Bash(cmake .. -DCMAKE_BUILD_TYPE=Release)",
+      "Bash(make -j8)",
+      "Bash(cmake ..)",
+      "Bash(echo \"EXIT: $?\")",
+      "Bash(./tests/test_cycle_dual_gemm ../config/ramulator_smoke.yaml)",
+      "Bash(./tests/test_cycle_llm ../config/ramulator_smoke.yaml)",
+      "Bash(echo \"EXIT=$?\")",
+      "Bash(lldb -b -o run -o \"bt 15\" ./tests/test_cycle_llm ../config/ramulator_smoke.yaml)",
+      "Bash(lldb -b -o run -o \"bt 20\" ./tests/test_cycle_llm ../config/ramulator_smoke.yaml)",
+      "Bash(lldb -b -o run -o \"thread backtrace -c 20\" ./tests/test_cycle_llm ../config/ramulator_smoke.yaml)",
+      "Bash(make test_cycle_llm -j8)",
+      "Bash(cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo)",
+      "Bash(lldb -b -o run -o \"bt 25\" ./tests/test_cycle_llm ../config/ramulator_smoke.yaml)",
+      "Bash(echo \"Release EXIT=$?\")",
+      "Bash(echo \"Release+no-strict-aliasing EXIT=$?\")",
+      "Bash(ctest --output-on-failure)",
+      "Bash(make test_cycle_dual_gemm -j8)",
+      "Bash(nm -gU /Users/sjia/ramulator2/libramulator.a)",
+      "Bash(nm -gU /Users/sjia/ramulator2/libramulator.dylib)",
+      "Bash(make mobol_sim)",
+      "Bash(./tests/smoke_ramulator ../config/ramulator_smoke.yaml)",
+      "Bash(lldb -b -o run -o \"bt 10\" ./tests/test_cycle_dual_gemm ../config/ramulator_smoke.yaml)",
+      "Bash(make -j10)",
+      "Bash(MallocScribble=1 MallocPreScribble=1 lldb -b -o \"breakpoint set -n __cxa_throw\" -o run -o \"bt 8\" -o \"frame select 2\" -o \"frame variable\" ./tests/test_cycle_llm ../config/ramulator_smoke.yaml)",
+      "Bash(MallocScribble=1 MallocPreScribble=1 lldb -b -o \"breakpoint set -n __cxa_throw\" -o run -o \"frame select 2\" -o \"expression -- *f\" -o \"expression -- \\(int\\)f->kind\" ./tests/test_cycle_llm ../config/ramulator_smoke.yaml)",
+      "Bash(MallocScribble=1 MallocPreScribble=1 lldb -b -o \"breakpoint set -n __cxa_throw\" -o run -o \"frame select 2\" -o \"p *f\" ./tests/test_cycle_llm ../config/ramulator_smoke.yaml)",
+      "Bash(DYLD_INSERT_LIBRARIES=/usr/lib/libgmalloc.dylib lldb -b -o run -o \"bt 12\" ./tests/test_cycle_llm ../config/ramulator_smoke.yaml)",
+      "Bash(DYLD_INSERT_LIBRARIES=/usr/lib/libgmalloc.dylib ./tests/test_cycle_llm ../config/ramulator_smoke.yaml)",
+      "Bash(DYLD_INSERT_LIBRARIES=/usr/lib/libgmalloc.dylib lldb -b -o run -o \"bt 20\" ./tests/test_cycle_llm ../config/ramulator_smoke.yaml)",
+      "Bash(DYLD_INSERT_LIBRARIES=/usr/lib/libgmalloc.dylib lldb -b -o run -o \"bt 25\" ./tests/test_cycle_llm ../config/ramulator_smoke.yaml)",
+      "Bash(DYLD_INSERT_LIBRARIES=/usr/lib/libgmalloc.dylib lldb -b -o \"breakpoint set -n __cxa_throw\" -o run -o \"thread backtrace -c 14\" ./tests/test_cycle_llm ../config/ramulator_smoke.yaml)",
+      "Bash(make test_cycle_llm -j10)",
+      "Bash(MallocScribble=1 MallocPreScribble=1 lldb -b -o \"breakpoint set -n __cxa_throw\" -o run -o \"thread backtrace -c 12\" ./tests/test_cycle_llm ../config/ramulator_smoke.yaml)"
+    ]
+  }
+}

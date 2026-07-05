@@ -1,0 +1,522 @@
+"""Lowering compiler: ModelConfig + Weights -> tile-ISA trace + DRAM image.
+
+Design (edge-scale, seq and d_model multiples of 16):
+  * The whole prefill runs on the tile array with an OUTPUT-BLOCK-STATIONARY
+    GEMM mapping. A logical matmul (SxK)*(KxN) tiles into 16x16 blocks;
+    output block (m,n) is computed on one tile by accumulating over K
+    blocks (fixed k-order => bit-reproducible). Blocks are round-robin
+    assigned across the 16 tiles for parallelism.
+  * Activations/weights are staged in DRAM; the tile pulls the operand
+    blocks it needs, runs MXU/VPU, writes results back to DRAM. Between
+    dependent ops a global DMA_FENCE + a barrier tag serialize the phases
+    (correct and simple; the DSE explores overlap-friendlier schedules).
+  * Attention, RoPE, norms, SwiGLU/GELU, and MoE routing all lower to the
+    same block primitives; data-dependent MoE routing is resolved at
+    compile time from the reference forward (static per given input).
+
+The emitted trace is validated two ways (see edgc.golden): golden==sim and
+golden==reference_forward.
+
+DRAM scratch layout (offsets in bytes):
+  0x00000  X       : seq x d_model  f16   (in/out activation, ping-pong)
+  weights are placed by gen; we re-emit them into a compact region.
+"""
+from __future__ import annotations
+from dataclasses import dataclass
+from typing import List, Dict, Tuple
+import math
+from . import isa
+from . import numerics as N
+from .model import ModelConfig, Weights, _rope_tables, routing_decisions
+
+BN = 16
+F16 = 2
+F32 = 4
+
+
+class DramAlloc:
+    def __init__(self, base=0x1000):
+        self.p = base
+    def alloc(self, nbytes, align=64):
+        self.p = (self.p + align - 1) & ~(align - 1)
+        a = self.p
+        self.p += nbytes
+        return a
+
+
+@dataclass
+class Sched:
+    """DSE knobs the compiler chooses among."""
+    stream_weights: bool = False   # bank-prefetch weights (needs buffer die)
+    nmc: bool = False              # buffer-die near-memory reduce/LN
+    tile_link: int = 1
+    wr_ports: int = 1
+    rd_ports: int = 2
+    dma_rate: int = 1
+    dram_density: int = 2048
+    label: str = "baseline"
+
+
+class Compiler:
+    def __init__(self, cfg: ModelConfig, w: Weights, sched: Sched,
+                 ramulator: str):
+        self.cfg = cfg
+        self.w = w
+        self.s = sched
+        self.b = isa.TraceBuilder()
+        self.dalloc = DramAlloc()
+        self.ram = ramulator
+        self.tag = 0           # global barrier tag counter
+        # per-tile local scratch bump allocator resets per op via fixed map
+        # DRAM regions
+        S, dm = cfg.seq_len, cfg.d_model
+        self.act_a = self.dalloc.alloc(S * dm * F16)
+        self.act_b = self.dalloc.alloc(S * dm * F16)
+        self.scratch = {}      # named DRAM scratch
+
+    # ── public entry ──
+    def compile(self):
+        cfg = self.cfg
+        self.b.set_config(
+            ramulator=self.ram,
+            tile_link=self.s.tile_link, wr_ports=self.s.wr_ports,
+            rd_ports=self.s.rd_ports, dma_rate=self.s.dma_rate,
+            dram_density=self.s.dram_density,
+            nmc_enable=1 if self.s.nmc else 0)
+        self._emit_weights_and_x()
+        cur = self.act_a
+        nxt = self.act_b
+        routes = routing_decisions(cfg, self.w) if cfg.n_experts > 1 else None
+        for l in range(cfg.n_layers):
+            cur = self._layer(l, cur, nxt, routes)
+            nxt = self.act_a if cur == self.act_b else self.act_b
+        # final activation is at `cur`
+        S, dm = cfg.seq_len, cfg.d_model
+        self.b.add_dump("out", cur - isa.DRAM_BASE if cur >= isa.DRAM_BASE else cur,
+                        S * dm * F16)
+        self.final_off = (cur - isa.DRAM_BASE) if cur >= isa.DRAM_BASE else cur
+        for t in range(isa.NUM_TILES):
+            self.b.t(t).halt()
+        return self.b
+
+    # ── weight / input staging ──
+    def _emit_weights_and_x(self):
+        cfg, w = self.cfg, self.w
+        dm, dkv, ff = cfg.d_model, cfg.d_kv, cfg.ffn_hidden
+        self.w_addr = {}
+        def put(name, bits):
+            off = self.dalloc.alloc(len(bits) * F16)
+            self.b.load_dram(off, N.f16_bytes(bits))
+            self.w_addr[name] = off
+        put("x0", w.x0)
+        # x0 lives at act_a; copy image directly there instead
+        self.b.load_dram(self.act_a, N.f16_bytes(w.x0))
+        for l in range(cfg.n_layers):
+            put(f"wq{l}", w.wq[l]); put(f"wk{l}", w.wk[l])
+            put(f"wv{l}", w.wv[l]); put(f"wo{l}", w.wo[l])
+            for e in range(cfg.n_experts):
+                put(f"wg{l}_{e}", w.w_gate[l][e])
+                put(f"wu{l}_{e}", w.w_up[l][e])
+                put(f"wd{l}_{e}", w.w_down[l][e])
+            if cfg.n_experts > 1:
+                put(f"wr{l}", w.w_router[l])
+        # rope tables (f32, per position block) staged in DRAM
+        if cfg.pos == "rope":
+            self._emit_rope_tables()
+
+    def _emit_rope_tables(self):
+        cfg = self.cfg
+        cos, sin = _rope_tables(cfg)
+        half = cfg.d_head // 2
+        # Build, per head, 16x16 f32 cos/sin blocks broadcasting the half
+        # angle across the 16 columns of the first half-block. For d_head=16
+        # (half=8) we lay the 8 angles into columns 0..7 and replicate to
+        # 8..15 (rotate-half pairs (k, k+8)). Stored as [pos-block][cos|sin].
+        # seq is a multiple of 16 -> one position block covers 16 rows.
+        nblk = cfg.seq_len // BN
+        self.rope_addr = self.dalloc.alloc(nblk * 2 * 1024)  # cos+sin per blk
+        buf = bytearray()
+        import struct
+        for pb in range(nblk):
+            for which in (cos, sin):
+                blk = [0.0] * 256
+                for i in range(BN):
+                    p = pb * BN + i
+                    for k in range(half):
+                        blk[i * BN + k] = which[p][k]
+                        blk[i * BN + half + k] = which[p][k]
+                buf += b"".join(struct.pack("<f", v) for v in blk)
+        self.b.load_dram(self.rope_addr, bytes(buf))
+
+    # ── a full transformer layer ──
+    def _layer(self, l, x_in, x_out, routes):
+        cfg = self.cfg
+        dm, dkv, ff = cfg.d_model, cfg.d_kv, cfg.ffn_hidden
+        S = cfg.seq_len
+        # scratch DRAM regions for this layer's intermediates
+        xn = self.dalloc.alloc(S * dm * F16)
+        q = self.dalloc.alloc(S * dm * F16)
+        k = self.dalloc.alloc(S * dkv * F16)
+        v = self.dalloc.alloc(S * dkv * F16)
+        ctx = self.dalloc.alloc(S * dm * F16)
+        attn = self.dalloc.alloc(S * dm * F16)
+        res1 = self.dalloc.alloc(S * dm * F16)
+        hn = self.dalloc.alloc(S * dm * F16)
+
+        # 1. pre-attention norm  (x_in -> xn)
+        self._norm(x_in, xn, S, dm)
+        # 2. QKV projections
+        self._gemm(xn, self.w_addr[f"wq{l}"], q, S, dm, dm, f"q{l}")
+        self._gemm(xn, self.w_addr[f"wk{l}"], k, S, dm, dkv, f"k{l}")
+        self._gemm(xn, self.w_addr[f"wv{l}"], v, S, dm, dkv, f"v{l}")
+        # 3. RoPE on q,k
+        if cfg.pos == "rope":
+            self._rope(q, S, cfg.n_heads, dm)
+            self._rope(k, S, cfg.n_kv_heads, dkv)
+        # 4. attention -> ctx
+        self._attention(q, k, v, ctx, l)
+        # 5. output projection + residual
+        self._gemm(ctx, self.w_addr[f"wo{l}"], attn, S, dm, dm, f"o{l}")
+        self._residual(x_in, attn, res1, S, dm)
+        # 6. ffn norm
+        self._norm(res1, hn, S, dm)
+        # 7. FFN (dense or MoE) + residual -> x_out
+        self._ffn(l, hn, res1, x_out, routes, S, dm, ff)
+        return x_out
+
+    # ── primitives (all block-parallel over tiles) ──
+    def _barrier(self):
+        """Global barrier: every tile releases to tile0, tile0 waits, then
+        releases back. Simple phase serialization."""
+        bt = self.tag; self.tag += 1
+        # producers: all tiles release to tile 0
+        for t in range(isa.NUM_TILES):
+            self.b.t(t).dma_fence()
+            self.b.t(t).release(0, bt, "barrier_up")
+        self.b.t(0).acquire(bt, isa.NUM_TILES, "barrier_join")
+        bt2 = self.tag; self.tag += 1
+        for t in range(isa.NUM_TILES):
+            self.b.t(0).release(t, bt2, "barrier_down")
+        for t in range(isa.NUM_TILES):
+            self.b.t(t).acquire(bt2, 1, "barrier_go")
+
+    def _tile_for(self, idx):
+        return idx % isa.NUM_TILES
+
+    # LOCAL scratch map. Each logical buffer gets a disjoint 16 KB slot so
+    # a strip of up to 16 blocks (f32) never overlaps a temp. LOCAL is
+    # 256 KB/tile, so this is comfortable. Sub-offsets used in code
+    # (LB+nj*512, LC+nj*1024, LA+0x1000, LT+0x2000, LB+0x1000) all stay
+    # within their owner's slot.
+    LA = 0x00000   # operand A strip
+    LB = 0x04000   # operand B strip
+    LC = 0x08000   # f32 accumulator / result strip
+    LT = 0x0C000   # temp f32 strip
+    LT2 = 0x10000  # small f16 temp (1 block)
+    LROPE = 0x14000  # rope cos/sin (2 KB)
+
+    def _dram_blk(self, base, ld, r, c, esz=F16):
+        return isa.dram(base + (r * BN * ld + c * BN) * esz)
+
+    def _load_block(self, tp, base, ld, r, c, off, esz=F16):
+        tp.dma(self._dram_blk(base, ld, r, c, esz), isa.local(tp.tid, off),
+               BN, BN * esz, ld * esz, BN * esz)
+
+    def _store_block(self, tp, off, base, ld, r, c, esz=F16):
+        tp.dma(isa.local(tp.tid, off), self._dram_blk(base, ld, r, c, esz),
+               BN, BN * esz, BN * esz, ld * esz)
+
+    def _gemm(self, a_base, b_base, c_base, M, K, N_, name):
+        """C(MxN) = A(MxK)*B(KxN), all f16 in DRAM, C f16 out. Output block
+        (m,n) accumulated over K blocks on one tile (k ascending)."""
+        mb, kb, nb = M // BN, K // BN, N_ // BN
+        idx = 0
+        for m in range(mb):
+            for n in range(nb):
+                tp = self.b.t(self._tile_for(idx)); idx += 1
+                for kk in range(kb):
+                    self._load_block(tp, a_base, K, m, kk, self.LA)
+                    self._load_block(tp, b_base, N_, kk, n, self.LB)
+                    tp.dma_fence()
+                    tp.mxu("MXU_F16F16", self.LA, self.LB, self.LC, kk > 0, name)
+                    tp.wait_mxu()
+                # convert f32 acc -> f16 and store
+                tp.vpu("VPU_CVT_F32_F16", a=self.LC, d=self.LT2)
+                self._store_block(tp, self.LT2, c_base, N_, m, n)
+        self._barrier()
+
+    def _norm(self, x_base, out_base, S, dm):
+        """RMSNorm/LayerNorm each row (width dm = dm/16 blocks). One row-
+        block (16 rows) per tile; norm needs the whole row so we load the
+        dm-wide strip into BLOCKED layout and run VPU_*NORM_BLK."""
+        op = "VPU_RMSNORM_BLK" if self.cfg.norm == "rmsnorm" else "VPU_LAYERNORM_F32"
+        cnt = dm // BN
+        rb = S // BN
+        idx = 0
+        for r in range(rb):
+            tp = self.b.t(self._tile_for(idx)); idx += 1
+            # load dm-wide strip: block c -> LA + c*1024 (as f32 via convert)
+            for c in range(cnt):
+                self._load_block(tp, x_base, dm, r, c, self.LB)  # f16
+                tp.dma_fence()
+                tp.vpu("VPU_CVT_F16_F32", a=self.LB, d=self.LA + c * 1024)
+            if op == "VPU_LAYERNORM_F32":
+                # layernorm expects row-major 16 x (16*cnt); repack blocked
+                # -> row-major into LT region is complex. Use blocked RMS/LN
+                # via the BLK path for both by staging as blocked and using
+                # RMSNORM only; for layernorm fall back to per-block gather.
+                self._layernorm_rowmajor(tp, cnt)
+                src = self.LT
+            else:
+                tp.vpu(op, a=self.LA, d=self.LC, scalar=self.cfg.norm_eps, count=cnt)
+                src = self.LC
+            # Convert all blocks to f16 in a distinct per-block slot (LT2 is a
+            # 16-block region), then store — so the async store DMAs never
+            # race a later convert reusing the same buffer (WAR hazard).
+            for c in range(cnt):
+                tp.vpu("VPU_CVT_F32_F16", a=src + c * 1024, d=self.LT2 + c * 512)
+                self._store_block(tp, self.LT2 + c * 512, out_base, dm, r, c)
+            tp.dma_fence()
+        self._barrier()
+
+    def _layernorm_rowmajor(self, tp, cnt):
+        # gather blocked LA -> row-major LT (16 x 16*cnt f32), run LN, keep
+        # result in LT (blocked) for uniform store. For simplicity reuse
+        # RMSNorm's blocked layout by computing LN in blocked form via the
+        # blocked op is not available; emit VPU_LAYERNORM over a row-major
+        # pack. We pack with strided DMA (local->local).
+        W = cnt * BN
+        # pack: for block c, its 16x16 -> columns [c*16, c*16+16) of row-major
+        for c in range(cnt):
+            tp.dma(isa.local(tp.tid, self.LA + c * 1024),
+                   isa.local(tp.tid, self.LT + c * BN * F32),
+                   BN, BN * F32, BN * F32, W * F32)
+        tp.dma_fence()
+        tp.vpu("VPU_LAYERNORM_F32", a=self.LT, d=self.LT + 0x2000,
+               scalar=self.cfg.norm_eps, count=cnt)
+        # unpack row-major -> blocked LT
+        for c in range(cnt):
+            tp.dma(isa.local(tp.tid, self.LT + 0x2000 + c * BN * F32),
+                   isa.local(tp.tid, self.LT + c * 1024),
+                   BN, BN * F32, W * F32, BN * F32)
+        tp.dma_fence()
+
+    def _residual(self, a_base, b_base, out_base, S, dm):
+        cnt = dm // BN
+        rb = S // BN
+        idx = 0
+        for r in range(rb):
+            for c in range(cnt):
+                tp = self.b.t(self._tile_for(idx)); idx += 1
+                self._load_block(tp, a_base, dm, r, c, self.LA)
+                self._load_block(tp, b_base, dm, r, c, self.LB)
+                tp.dma_fence()
+                tp.vpu("VPU_CVT_F16_F32", a=self.LA, d=self.LC)
+                tp.vpu("VPU_CVT_F16_F32", a=self.LB, d=self.LT)
+                tp.vpu("VPU_ADD_F32", a=self.LC, b=self.LT, d=self.LC)
+                tp.vpu("VPU_CVT_F32_F16", a=self.LC, d=self.LT2)
+                self._store_block(tp, self.LT2, out_base, dm, r, c)
+        self._barrier()
+
+    def _rope(self, base, S, nheads, dmodel):
+        # d_head == 16 => each head is exactly one 16-wide block; RoPE
+        # rotates dim k with dim k+half inside that block.
+        cfg = self.cfg
+        assert cfg.d_head == BN, "compiler _rope assumes d_head == 16"
+        half = cfg.d_head // 2
+        rb = S // BN
+        idx = 0
+        for r in range(rb):
+            for h in range(nheads):
+                tp = self.b.t(self._tile_for(idx)); idx += 1
+                col = h  # head h occupies block column h
+                self._load_block(tp, base, dmodel, r, col, self.LA)
+                cos_off = self.rope_addr + (r * 2) * 1024
+                tp.dma_linear(isa.dram(cos_off), isa.local(tp.tid, self.LROPE), 1024)
+                tp.dma_linear(isa.dram(cos_off + 1024),
+                              isa.local(tp.tid, self.LROPE + 1024), 1024)
+                tp.dma_fence()
+                tp.vpu("VPU_ROPE_F16", a=self.LA, d=self.LT2, count=half,
+                       aux=self.LROPE)
+                self._store_block(tp, self.LT2, base, dmodel, r, col)
+        self._barrier()
+
+    def _attention(self, q, k, v, ctx, l):
+        cfg = self.cfg
+        S, dm, dkv, dh = cfg.seq_len, cfg.d_model, cfg.d_kv, cfg.d_head
+        gsz = cfg.group_size()
+        # For edge sizes S<=16 (one block) and d_head=16 (one block): each
+        # head is a single 16x16 attention. Generalize over seq-blocks.
+        sb = S // BN
+        idx = 0
+        for h in range(cfg.n_heads):
+            kvh = h // gsz
+            qcol = (h * dh) // BN
+            kcol = (kvh * dh) // BN
+            for mi in range(sb):
+                tp = self.b.t(self._tile_for(idx)); idx += 1
+                # scores S_blk = Q_blk (16 x dh) * K^T. For dh=16, one block.
+                self._load_block(tp, q, dm, mi, qcol, self.LA)   # Q rows
+                # load K rows for all key blocks, transpose, matmul-accumulate
+                # scores into LC (16 x S). For S<=16 single block.
+                for nj in range(sb):
+                    self._load_block(tp, k, dkv, nj, kcol, self.LB)
+                    tp.dma_fence()
+                    tp.vpu("VPU_TRANS_F16", a=self.LB, d=self.LT2)  # K^T block
+                    tp.mxu("MXU_F16F16", self.LA, self.LT2,
+                           self.LC + nj * 1024, False, "scores")
+                    tp.wait_mxu()  # scores committed before softmax reads LC
+                # softmax over the S columns (blocked), causal + window
+                row0 = mi * BN
+                mask = row0 if cfg.attn_mask == "causal" else -1
+                tp.vpu("VPU_SOFTMAX_BLK", a=self.LC, d=self.LT,
+                       scalar=cfg.attn_scale(), count=sb, aux=mask,
+                       rows=cfg.sliding_window, row_bytes=S)
+                # convert probs to f16 per block
+                for nj in range(sb):
+                    tp.vpu("VPU_CVT_F32_F16", a=self.LT + nj * 1024, d=self.LB + nj * 512)
+                # ctx = P * V, accumulate over key blocks
+                for nj in range(sb):
+                    self._load_block(tp, v, dkv, nj, kcol, self.LA + 0x1000)
+                    tp.dma_fence()
+                    tp.mxu("MXU_F16F16", self.LB + nj * 512, self.LA + 0x1000,
+                           self.LC, nj > 0, "ctx")
+                    tp.wait_mxu()  # ctx committed before the convert reads LC
+                tp.vpu("VPU_CVT_F32_F16", a=self.LC, d=self.LT2)
+                self._store_block(tp, self.LT2, ctx, dm, mi, qcol)
+                tp.dma_fence()  # store done before this tile reuses LT2
+        self._barrier()
+
+    def _ffn(self, l, hn, res_base, out_base, routes, S, dm, ff):
+        cfg = self.cfg
+        if cfg.n_experts == 1:
+            self._expert_dense(l, 0, hn, res_base, out_base, S, dm, ff, None)
+        else:
+            # MoE: compile-time routing. For each token-block we know the
+            # experts. For edge scale (S<=16) all tokens share one block, so
+            # we compute each needed expert on the full block then combine
+            # per-token with the compiled gates (masking non-routed tokens).
+            self._moe(l, hn, res_base, out_base, routes[l], S, dm, ff)
+
+    def _expert_dense(self, l, e, hn, res_base, out_base, S, dm, ff, gate_mask):
+        cfg = self.cfg
+        g = self.dalloc.alloc(S * ff * F16)
+        act = self.dalloc.alloc(S * ff * F16)
+        self._gemm(hn, self.w_addr[f"wg{l}_{e}"], g, S, dm, ff, f"g{l}")
+        if cfg.ffn == "swiglu":
+            u = self.dalloc.alloc(S * ff * F16)
+            self._gemm(hn, self.w_addr[f"wu{l}_{e}"], u, S, dm, ff, f"u{l}")
+            self._silu_gate(g, u, act, S, ff)
+        else:
+            self._gelu(g, act, S, ff)
+        down = self.dalloc.alloc(S * dm * F16)
+        self._gemm(act, self.w_addr[f"wd{l}_{e}"], down, S, ff, dm, f"d{l}")
+        self._residual(res_base, down, out_base, S, dm)
+
+    def _silu_gate(self, g_base, u_base, out_base, S, ff):
+        cnt = ff // BN
+        rb = S // BN
+        idx = 0
+        for r in range(rb):
+            for c in range(cnt):
+                tp = self.b.t(self._tile_for(idx)); idx += 1
+                self._load_block(tp, g_base, ff, r, c, self.LA)
+                self._load_block(tp, u_base, ff, r, c, self.LB)
+                tp.dma_fence()
+                tp.vpu("VPU_CVT_F16_F32", a=self.LA, d=self.LC)
+                tp.vpu("VPU_CVT_F16_F32", a=self.LB, d=self.LT)
+                tp.vpu("VPU_SILU_F32", a=self.LC, d=self.LC)
+                tp.vpu("VPU_MUL_F32", a=self.LC, b=self.LT, d=self.LC)
+                tp.vpu("VPU_CVT_F32_F16", a=self.LC, d=self.LT2)
+                self._store_block(tp, self.LT2, out_base, ff, r, c)
+        self._barrier()
+
+    def _gelu(self, g_base, out_base, S, ff):
+        cnt = ff // BN
+        rb = S // BN
+        idx = 0
+        for r in range(rb):
+            for c in range(cnt):
+                tp = self.b.t(self._tile_for(idx)); idx += 1
+                self._load_block(tp, g_base, ff, r, c, self.LA)
+                tp.dma_fence()
+                tp.vpu("VPU_CVT_F16_F32", a=self.LA, d=self.LC)
+                tp.vpu("VPU_GELU_F32", a=self.LC, d=self.LC)
+                tp.vpu("VPU_CVT_F32_F16", a=self.LC, d=self.LT2)
+                self._store_block(tp, self.LT2, out_base, ff, r, c)
+        self._barrier()
+
+    def _moe(self, l, hn, res_base, out_base, routes, S, dm, ff):
+        # Compute a zero-initialized accumulator in DRAM, add each expert's
+        # gated contribution for the tokens routed to it. Static routing =>
+        # per-token gate weights are compile-time constants baked as a
+        # diagonal scale applied after the expert's down-projection.
+        cfg = self.cfg
+        acc = self.dalloc.alloc(S * dm * F16)
+        # init acc = 0 by storing zeros (emit a zero block image in DRAM)
+        self.b.load_dram(acc, b"\x00" * (S * dm * F16))
+        experts_used = sorted({e for tok in routes for (e, _g) in tok})
+        for e in experts_used:
+            # per-token gate for this expert (0 if not routed)
+            gate = [0.0] * S
+            for ti, tok in enumerate(routes):
+                for (ee, gg) in tok:
+                    if ee == e:
+                        gate[ti] = gg
+            eo = self.dalloc.alloc(S * dm * F16)
+            self._expert_only(l, e, hn, eo, S, dm, ff)
+            self._scale_add(eo, gate, acc, S, dm)
+        self._residual(res_base, acc, out_base, S, dm)
+
+    def _expert_only(self, l, e, hn, out_base, S, dm, ff):
+        cfg = self.cfg
+        g = self.dalloc.alloc(S * ff * F16)
+        act = self.dalloc.alloc(S * ff * F16)
+        self._gemm(hn, self.w_addr[f"wg{l}_{e}"], g, S, dm, ff, f"g{l}_{e}")
+        if cfg.ffn == "swiglu":
+            u = self.dalloc.alloc(S * ff * F16)
+            self._gemm(hn, self.w_addr[f"wu{l}_{e}"], u, S, dm, ff, f"u{l}_{e}")
+            self._silu_gate(g, u, act, S, ff)
+        else:
+            self._gelu(g, act, S, ff)
+        self._gemm(act, self.w_addr[f"wd{l}_{e}"], out_base, S, ff, dm, f"d{l}_{e}")
+
+    def _scale_add(self, e_base, gate, acc_base, S, dm):
+        # acc[row r] += gate[token] * e_base[row r]; gate is per token (row).
+        # Each 16-row block has 16 tokens => per-row scalar. We apply the
+        # scale by building a per-token diagonal via VPU_SCALE on 16 single
+        # rows is wasteful; instead bake gate into a 16x16 f32 "gate block"
+        # broadcast and multiply. For simplicity here: token == row, and a
+        # block spans BN tokens, so emit a gate image and VPU_MUL.
+        cnt = dm // BN
+        rb = S // BN
+        import struct
+        # gate block per row-block: 16x16, row i filled with gate[r*16+i]
+        gate_dram = self.dalloc.alloc(rb * 1024)
+        buf = bytearray()
+        for r in range(rb):
+            blk = [0.0] * 256
+            for i in range(BN):
+                tok = r * BN + i
+                for j in range(BN):
+                    blk[i * BN + j] = gate[tok] if tok < S else 0.0
+            buf += b"".join(struct.pack("<f", v) for v in blk)
+        self.b.load_dram(gate_dram, bytes(buf))
+        idx = 0
+        for r in range(rb):
+            for c in range(cnt):
+                tp = self.b.t(self._tile_for(idx)); idx += 1
+                self._load_block(tp, e_base, dm, r, c, self.LA)
+                self._load_block(tp, acc_base, dm, r, c, self.LB)
+                tp.dma_linear(isa.dram(gate_dram + r * 1024),
+                              isa.local(tp.tid, self.LT), 1024)
+                tp.dma_fence()
+                tp.vpu("VPU_CVT_F16_F32", a=self.LA, d=self.LC)
+                tp.vpu("VPU_MUL_F32", a=self.LC, b=self.LT, d=self.LC)
+                tp.vpu("VPU_CVT_F16_F32", a=self.LB, d=self.LT2 - 0)  # acc->f32 in LT? need space
+                # use LA region (free now) as acc-f32
+                tp.vpu("VPU_CVT_F16_F32", a=self.LB, d=self.LB + 0x1000)
+                tp.vpu("VPU_ADD_F32", a=self.LC, b=self.LB + 0x1000, d=self.LC)
+                tp.vpu("VPU_CVT_F32_F16", a=self.LC, d=self.LT2)
+                self._store_block(tp, self.LT2, acc_base, dm, r, c)
+        self._barrier()

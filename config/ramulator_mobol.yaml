@@ -1,0 +1,35 @@
+# Ramulator2 configuration for the MOBOL cycle-accurate simulator.
+# DDR4-2400, single channel. Driven externally through the GEM5 frontend
+# wrapper (the official pattern for external simulators): the MOBOL DRAM
+# controller submits 64 B transactions via receive_external_requests()
+# and ticks the memory system 3x per logic cycle (Q5: logic:DRAM = 1:3).
+
+Frontend:
+  impl: GEM5
+
+MemorySystem:
+  impl: GenericDRAM
+  clock_ratio: 3
+
+  DRAM:
+    impl: DDR4
+    org:
+      preset: DDR4_8Gb_x8
+      channel: 1
+      rank: 2
+    timing:
+      preset: DDR4_2400R
+
+  Controller:
+    impl: Generic
+    Scheduler:
+      impl: FRFCFS
+    RefreshManager:
+      impl: AllBank
+    RowPolicy:
+      impl: ClosedRowPolicy
+      cap: 4
+    plugins:
+
+  AddrMapper:
+    impl: RoBaRaCoCh

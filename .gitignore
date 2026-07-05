@@ -1,0 +1,79 @@
+# -------------------- 构建与编译输出 --------------------
+build/                      # CMake 构建目录
+cmake-build-*/              # 常见 IDE（如 CLion）的 CMake 目录
+bin/                        # 二进制输出目录（若存在）
+lib/                        # 库文件输出目录
+rtl/obj*
+build/src
+build/tests
+
+# -------------------- 编译中间文件 --------------------
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dylib
+*.dll
+*.exp
+*.pdb
+*.ilk
+*.map
+
+# -------------------- 可执行文件 --------------------
+# （根据实际可执行文件名调整）
+src/mobol_sim               # 主模拟器（若放在 src/ 下）
+trace_sim                   # 边缘 trace 模拟器
+*.exe
+
+# -------------------- CMake 生成文件 --------------------
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.cmake
+!CMakeLists.txt             # 保留根目录的 CMakeLists.txt
+!*/CMakeLists.txt           # 保留子目录的 CMakeLists.txt（如有）
+
+# -------------------- Python 相关 --------------------
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.py[cod]
+venv/
+env/
+.venv/
+
+# -------------------- 临时输出与日志 --------------------
+/tmp/edgc_out/              # 脚本生成的临时输出目录
+out/
+logs/
+*.log
+*.tmp
+*.temp
+
+# -------------------- IDE 和编辑器 --------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+*.suo
+*.user
+*.sln                # 若使用 Visual Studio，可忽略解决方案文件
+*.vcxproj*
+*.filters
+
+# -------------------- 其他可能生成的中间文件 --------------------
+*.dep
+*.d
+*.gcda
+*.gcno
+*.gcov
+*.h.gch
+*.patch
+*.diff
