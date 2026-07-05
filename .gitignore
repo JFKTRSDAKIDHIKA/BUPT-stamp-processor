@@ -6,6 +6,7 @@ lib/                        # 库文件输出目录
 rtl/obj*
 build/src
 build/tests
+synth/obj_equiv
 
 # -------------------- 编译中间文件 --------------------
 *.o

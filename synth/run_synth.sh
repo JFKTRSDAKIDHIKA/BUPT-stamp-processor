@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+# run_synth.sh — sv2v + Yosys synthesis driver for the MOBOL RTL.
+#
+# Usage:  ./run_synth.sh [top]        top ∈ {tile_top, tile_node, ssp_bank}
+#
+# Steps:
+#   1. sv2v converts the SystemVerilog file list to Verilog-2005
+#      (Yosys' native frontend cannot parse unpacked-array ports).
+#   2. The synth.ys template is instantiated for this top.
+#   3. Yosys synthesizes to USC-3N-2D standard cells with the fakeram
+#      SRAM macros kept as black boxes.
+#
+# Outputs in synth/build/<top>/:
+#   design.v         sv2v-converted RTL
+#   synth.ys         the executed Yosys script
+#   yosys.log        full Yosys log
+#   synth_stat.txt   area/cell report (stat -liberty)
+#   <top>.gate.v     mapped gate-level netlist
+set -euo pipefail
+
+TOP=${1:-tile_top}
+SYNTH_DIR=$(cd "$(dirname "$0")" && pwd)
+ROOT=$(dirname "$SYNTH_DIR")
+BUILD=$SYNTH_DIR/build/$TOP
+PDK_LIB=$SYNTH_DIR/pdk/stdcell.lib     # symlink -> USC-3N-2D OpenROAD lib
+SRAM_BB=$SYNTH_DIR/macros/mobol_sram_4096x512_2r1w/mobol_sram_4096x512_2r1w.bb.v
+FILELIST=$SYNTH_DIR/filelists/$TOP.f
+
+[[ -f $FILELIST ]] || { echo "error: no file list $FILELIST"; exit 1; }
+[[ -f $SRAM_BB ]] || { echo "error: run fakeram/gen_sram_macros.py first"; exit 1; }
+mkdir -p "$BUILD"
+
+# 1. SystemVerilog -> Verilog-2005 (strip comments/blank lines from the .f)
+FILES=()
+while IFS= read -r line; do
+  FILES+=("$ROOT/$line")
+done < <(grep -v '^[[:space:]]*#' "$FILELIST" | grep -v '^[[:space:]]*$')
+echo "== sv2v: ${#FILES[@]} files -> $BUILD/design.v"
+sv2v -I"$ROOT/rtl" "${FILES[@]}" > "$BUILD/design.v"
+
+# 2. instantiate the Yosys script template
+sed -e "s|@TOP@|$TOP|g" \
+    -e "s|@BUILD@|$BUILD|g" \
+    -e "s|@PDK_LIB@|$PDK_LIB|g" \
+    -e "s|@SRAM_BB@|$SRAM_BB|g" \
+    "$SYNTH_DIR/yosys/synth.ys.in" > "$BUILD/synth.ys"
+
+# 3. synthesize
+echo "== yosys: top=$TOP (log: $BUILD/yosys.log)"
+yosys -l "$BUILD/yosys.log" -q "$BUILD/synth.ys"
+
+# 4. append SRAM macro area to the report (yosys' stat can only price cells
+#    from one liberty at a time, so the macro shows up as "area unknown")
+SRAM_LIB=$SYNTH_DIR/macros/mobol_sram_4096x512_2r1w/mobol_sram_4096x512_2r1w.lib
+MACRO_AREA=$(awk '/^cell\(/ {incell=1} incell && /area :/ \
+                 {gsub(/[^0-9.]/, "", $3); print $3; exit}' "$SRAM_LIB")
+MACRO_CNT=$(awk '$2 == "mobol_sram_4096x512_2r1w" {print $1; exit}' \
+            "$BUILD/synth_stat.txt" || true)
+if [[ -n ${MACRO_CNT:-} ]]; then
+  {
+    echo ""
+    echo "SRAM macro area (from fakeram .lib, not visible to stat above):"
+    echo "  $MACRO_CNT x mobol_sram_4096x512_2r1w @ $MACRO_AREA um^2 = " \
+         "$(echo "$MACRO_CNT $MACRO_AREA" | awk '{printf "%.3f", $1*$2/1e6}') mm^2"
+  } >> "$BUILD/synth_stat.txt"
+fi
+
+echo "== done"
+echo "   netlist : $BUILD/$TOP.gate.v"
+echo "   report  : $BUILD/synth_stat.txt"

@@ -1,0 +1,142 @@
+
+11. Printing statistics.
+
+=== tile_node ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     1606 wires
+     5387 wire bits
+       23 public wires
+     3804 public wire bits
+       17 ports
+     2754 port bits
+     2108 cells
+      525   AND4x1
+      524   AOI31x1
+        7   INVx1
+      524   NAND2x1
+      525   NAND3x1
+        2   NAND4x1
+        1   NOR2x1
+        2 submodules
+        1   $paramod$5cd899e5ee4aed9f430e46cebb03ce403cbb1c8a\sram_2r1w
+        1   $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0000
+
+   Area for cell type \mobol_sram_4096x512_2r1w is unknown!
+
+=== $paramod$5cd899e5ee4aed9f430e46cebb03ce403cbb1c8a\sram_2r1w ===
+
+        +----------Local Count, excluding submodules.
+        | 
+        8 wires
+     1574 wire bits
+        8 public wires
+     1574 public wire bits
+        8 ports
+     1574 port bits
+        1 cells
+        1   mobol_sram_4096x512_2r1w
+
+   Area for cell type \mobol_sram_4096x512_2r1w is unknown!
+
+=== $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0000 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     2519 wires
+     3636 wire bits
+       13 public wires
+     1130 public wire bits
+       13 ports
+     1130 port bits
+     3055 cells
+      580   AND2x1
+       24   AND3x1
+       15   AND4x1
+       13   AOI21x1
+       15   AOI221x1
+        1   AOI222x1
+        9   AOI22x1
+        1   AOI311x1
+        9   AOI31x1
+      564   DFFHQNx1
+     1095   INVx1
+      535   MUX2x1
+       53   NAND2x1
+       24   NAND3x1
+       14   NAND4x1
+        5   NOR2x1
+        1   NOR3x1
+        2   NOR4x1
+       21   OAI21x1
+       23   OAI221x1
+        1   OAI222x1
+        6   OAI22x1
+       14   OAI31x1
+        8   OR2x1
+        1   OR3x1
+        2   OR4x1
+       10   XNOR2x1
+        8   XNOR3x1
+        1   XOR2x1
+
+=== design hierarchy ===
+
+        +----------Count including submodules.
+        | 
+     5164 tile_node
+        1 $paramod$5cd899e5ee4aed9f430e46cebb03ce403cbb1c8a\sram_2r1w
+     3055 $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0000
+
+        +----------Count including submodules.
+        | 
+     4133 wires
+    10597 wire bits
+       44 public wires
+     6508 public wire bits
+       38 ports
+     5458 port bits
+        - memories
+        - memory bits
+        - processes
+     5164 cells
+      580   AND2x1
+       24   AND3x1
+      540   AND4x1
+       13   AOI21x1
+       15   AOI221x1
+        1   AOI222x1
+        9   AOI22x1
+        1   AOI311x1
+      533   AOI31x1
+      564   DFFHQNx1
+     1102   INVx1
+      535   MUX2x1
+      577   NAND2x1
+      549   NAND3x1
+       16   NAND4x1
+        6   NOR2x1
+        1   NOR3x1
+        2   NOR4x1
+       21   OAI21x1
+       23   OAI221x1
+        1   OAI222x1
+        6   OAI22x1
+       14   OAI31x1
+        8   OR2x1
+        1   OR3x1
+        2   OR4x1
+       10   XNOR2x1
+        8   XNOR3x1
+        1   XOR2x1
+        1   mobol_sram_4096x512_2r1w
+        2 submodules
+        1   $paramod$5cd899e5ee4aed9f430e46cebb03ce403cbb1c8a\sram_2r1w
+        1   $paramod\dma_engine\ADDR_W=s32'00000000000000000000000000001100\MY_ID=4'0000
+
+   Area for cell type \mobol_sram_4096x512_2r1w is unknown!
+
+
+SRAM macro area (from fakeram .lib, not visible to stat above):
+  1 x mobol_sram_4096x512_2r1w @ 139156.940 um^2 =  0.139 mm^2

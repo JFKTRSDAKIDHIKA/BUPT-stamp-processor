@@ -1,0 +1,314 @@
+
+11. Printing statistics.
+
+=== $paramod$5cd899e5ee4aed9f430e46cebb03ce403cbb1c8a\sram_2r1w ===
+
+        +----------Local Count, excluding submodules.
+        | 
+        8 wires
+     1574 wire bits
+        8 public wires
+     1574 public wire bits
+        8 ports
+     1574 port bits
+        1 cells
+        1   mobol_sram_4096x512_2r1w
+
+   Area for cell type \mobol_sram_4096x512_2r1w is unknown!
+
+=== $paramod$469099b5e68bc1f20c724975cc7f42cff2afcbf6\join_ctr ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     6913 wires
+     7701 wire bits
+        9 public wires
+      797 public wire bits
+        9 ports
+      797 port bits
+     7673 cells
+      968   AND2x1
+      379   AND3x1
+      411   AND4x1
+      136   AOI21x1
+        5   AOI221x1
+        8   AOI222x1
+      111   AOI22x1
+       16   AOI311x1
+      529   AOI31x1
+      768   DFFHQNx1
+     1024   INVx1
+     1029   MUX2x1
+      721   NAND2x1
+      868   NAND3x1
+       92   NAND4x1
+       19   NOR2x1
+       80   NOR3x1
+       11   NOR4x1
+       91   OAI21x1
+        4   OAI221x1
+        2   OAI222x1
+       12   OAI22x1
+       20   OAI311x1
+      176   OAI31x1
+       69   OR2x1
+       70   OR3x1
+        3   OR4x1
+       37   XNOR2x1
+       13   XNOR3x1
+        1   XOR2x1
+
+=== mxu16 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+   110720 wires
+   156492 wire bits
+      537 public wires
+    45573 public wire bits
+        9 ports
+    28677 port bits
+   119112 cells
+      895   AND2x1
+    11109   AND3x1
+     4358   AND4x1
+     8194   AOI21x1
+        2   AOI221x1
+       13   AOI22x1
+    20487   DFFHQNx1
+    32777   INVx1
+    20480   MUX2x1
+      263   NAND2x1
+     4584   NAND3x1
+    15793   NAND4x1
+        1   NOR2x1
+      148   NOR4x1
+        6   OAI21x1
+        2   OAI31x1
+      528 submodules
+       16   f16_to_f32
+      256   fp32_add
+      256   fp32_mul
+
+=== fp32_add ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     3544 wires
+     3637 wire bits
+        3 public wires
+       96 public wire bits
+        3 ports
+       96 port bits
+     3573 cells
+      268   AND2x1
+      251   AND3x1
+      194   AND4x1
+      340   AOI21x1
+       30   AOI221x1
+        5   AOI222x1
+       72   AOI22x1
+       20   AOI311x1
+       88   AOI31x1
+       64   INVx1
+      407   MUX2x1
+      250   NAND2x1
+      274   NAND3x1
+      210   NAND4x1
+       52   NOR2x1
+       14   NOR3x1
+       13   NOR4x1
+      370   OAI21x1
+       35   OAI221x1
+      116   OAI22x1
+       34   OAI311x1
+       66   OAI31x1
+       60   OR2x1
+       19   OR3x1
+       35   OR4x1
+      274   XNOR2x1
+        4   XNOR3x1
+        8   XOR2x1
+
+=== fp32_mul ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     6285 wires
+     6378 wire bits
+        3 public wires
+       96 public wire bits
+        3 ports
+       96 port bits
+     6314 cells
+     1163   AND2x1
+      148   AND3x1
+      152   AND4x1
+      520   AOI21x1
+       15   AOI221x1
+      162   AOI22x1
+       24   AOI311x1
+       47   AOI31x1
+       50   INVx1
+       99   MUX2x1
+      966   NAND2x1
+      143   NAND3x1
+      220   NAND4x1
+      130   NOR2x1
+       21   NOR3x1
+       14   NOR4x1
+      611   OAI21x1
+       19   OAI221x1
+        9   OAI22x1
+       47   OAI311x1
+       41   OAI31x1
+      133   OR2x1
+       47   OR3x1
+      890   XNOR2x1
+      641   XNOR3x1
+        2   XOR2x1
+
+=== tile_top ===
+
+        +----------Local Count, excluding submodules.
+        | 
+    90580 wires
+   113966 wire bits
+       32 public wires
+    23418 public wire bits
+       20 ports
+     1118 port bits
+   103377 cells
+     1563   AND2x1
+      955   AND3x1
+      349   AND4x1
+      758   AOI21x1
+      289   AOI221x1
+     1136   AOI222x1
+     1534   AOI22x1
+        9   AOI311x1
+      489   AOI31x1
+    32779   DFFHQNx1
+    29374   INVx1
+    32343   MUX2x1
+      553   NAND2x1
+      411   NAND3x1
+       14   NAND4x1
+       39   NOR2x1
+       52   NOR3x1
+       18   NOR4x1
+      478   OAI21x1
+       18   OAI221x1
+       28   OAI222x1
+       96   OAI22x1
+        2   OAI311x1
+       66   OAI31x1
+        4   OR2x1
+        1   OR3x1
+       19   XNOR2x1
+        3 submodules
+        1   $paramod$469099b5e68bc1f20c724975cc7f42cff2afcbf6\join_ctr
+        1   $paramod$5cd899e5ee4aed9f430e46cebb03ce403cbb1c8a\sram_2r1w
+        1   mxu16
+
+   Area for cell type \mobol_sram_4096x512_2r1w is unknown!
+
+=== f16_to_f32 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      143 wires
+      189 wire bits
+        2 public wires
+       48 public wire bits
+        2 ports
+       48 port bits
+      157 cells
+       11   AND2x1
+       11   AND3x1
+        4   AND4x1
+       20   AOI21x1
+        1   AOI221x1
+        3   AOI22x1
+        3   AOI31x1
+       13   INVx1
+       12   NAND2x1
+       17   NAND3x1
+        8   NAND4x1
+        6   NOR2x1
+        1   NOR3x1
+        2   NOR4x1
+       28   OAI21x1
+        1   OAI221x1
+        3   OAI22x1
+        1   OAI311x1
+        5   OAI31x1
+        4   OR2x1
+        2   OR3x1
+        1   OR4x1
+
+=== design hierarchy ===
+
+        +----------Count including submodules.
+        | 
+  2763747 tile_top
+     7673 $paramod$469099b5e68bc1f20c724975cc7f42cff2afcbf6\join_ctr
+        1 $paramod$5cd899e5ee4aed9f430e46cebb03ce403cbb1c8a\sram_2r1w
+   119112 mxu16
+      157   f16_to_f32
+     3573   fp32_add
+     6314   fp32_mul
+
+        +----------Count including submodules.
+        | 
+  2726733 wires
+  2846597 wire bits
+     2154 public wires
+   121282 public wire bits
+     1614 ports
+    82086 port bits
+        - memories
+        - memory bits
+        - processes
+  2763747 cells
+   369938   AND2x1
+   114763   AND3x1
+    93758   AND4x1
+   229568   AOI21x1
+    11832   AOI221x1
+     2424   AOI222x1
+    61610   AOI22x1
+    11289   AOI311x1
+    35626   AOI31x1
+    54034   DFFHQNx1
+    92567   INVx1
+   183388   MUX2x1
+   313025   NAND2x1
+   112887   NAND3x1
+   126107   NAND4x1
+    46747   NOR2x1
+     9108   NOR3x1
+     7121   NOR4x1
+   252159   OAI21x1
+    13862   OAI221x1
+       30   OAI222x1
+    32156   OAI22x1
+    20774   OAI311x1
+    27716   OAI31x1
+    49545   OR2x1
+    16999   OR3x1
+     8979   OR4x1
+   298040   XNOR2x1
+   165133   XNOR3x1
+     2561   XOR2x1
+        1   mobol_sram_4096x512_2r1w
+        3 submodules
+        1   $paramod$469099b5e68bc1f20c724975cc7f42cff2afcbf6\join_ctr
+        1   $paramod$5cd899e5ee4aed9f430e46cebb03ce403cbb1c8a\sram_2r1w
+        1   mxu16
+
+   Area for cell type \mobol_sram_4096x512_2r1w is unknown!
+
+
+SRAM macro area (from fakeram .lib, not visible to stat above):
+  1 x mobol_sram_4096x512_2r1w @ 139156.940 um^2 =  0.139 mm^2

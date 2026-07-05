@@ -91,7 +91,7 @@ module fp32_add (
         M = msb96(res);
         // 24-bit significand with leading 1 at the top, plus guard & sticky.
         sig    = 25'((res >> (M - 23)) & 96'h1FFFFFF);
-        guard  = (M >= 24) ? logic'((res >> (M - 24)) & 96'd1) : 1'b0;
+        guard  = (M >= 24) ? res[M-24] : 1'b0;  // bit select == (res>>(M-24))&1
         sticky = far_sticky |
                  ((M >= 25) ? (|(res & ((96'd1 << (M - 24)) - 96'd1))) : 1'b0);
         // Result biased exponent: eL + (M - 80).
@@ -109,7 +109,7 @@ module fp32_add (
           else begin
             w  = {39'd0, mrnd};
             sm = 25'(w >> sh);
-            gg = (sh>=1)?logic'((w>>(sh-1))&64'd1):1'b0;
+            gg = (sh>=1) ? w[sh-1] : 1'b0;  // bit select == (w>>(sh-1))&1
             ss3= (sh>=2)?(|(w&((64'd1<<(sh-1))-64'd1))):1'b0;
             if (gg && (ss3 || sm[0])) sm = sm + 25'd1;
             if (sm[23]) y = {ry, 8'd1, sm[22:0]};

@@ -1,0 +1,45 @@
+
+11. Printing statistics.
+
+=== ssp_bank ===
+
+        +----------Local Count, excluding submodules.
+        | 
+    38342 wires
+    72627 wire bits
+      104 public wires
+    34389 public wire bits
+        8 ports
+     1589 port bits
+    39326 cells
+     3122   AND2x1
+     6813   AND3x1
+     6314   AND4x1
+     3280   AOI21x1
+       51   AOI221x1
+       38   AOI222x1
+     4734   AOI22x1
+        8   AOI311x1
+     2712   AOI31x1
+       10   DFFHQNx1
+       39   INVx1
+     4902   NAND2x1
+     6159   NAND3x1
+     1063   NAND4x1
+       10   NOR2x1
+        1   NOR3x1
+        5   NOR4x1
+        1   OAI221x1
+       19   OAI222x1
+        1   OAI22x1
+        6   OAI311x1
+        2   OR2x1
+        1   OR3x1
+        3   OR4x1
+       32   mobol_sram_4096x512_2r1w
+
+   Area for cell type \mobol_sram_4096x512_2r1w is unknown!
+
+
+SRAM macro area (from fakeram .lib, not visible to stat above):
+  32 x mobol_sram_4096x512_2r1w @ 139156.940 um^2 =  4.453 mm^2

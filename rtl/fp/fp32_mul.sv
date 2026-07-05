@@ -78,7 +78,7 @@ module fp32_mul (
         end else begin
           w  = {39'd0, mrnd};
           sm = 25'(w >> sh);
-          gg = (sh >= 1) ? logic'((w >> (sh-1)) & 64'd1) : 1'b0;
+          gg = (sh >= 1) ? w[sh-1] : 1'b0;  // bit select == (w>>(sh-1))&1
           ss = (sh >= 2) ? (|(w & ((64'd1 << (sh-1)) - 64'd1))) : 1'b0;
           if (gg && (ss || sm[0])) sm = sm + 25'd1;
           if (sm[23]) y = {sy, 8'd1, sm[22:0]};               // rounded to normal
