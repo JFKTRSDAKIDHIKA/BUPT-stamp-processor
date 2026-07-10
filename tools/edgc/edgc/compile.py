@@ -274,10 +274,24 @@ class Compiler:
         tp.dma(isa.local(tp.tid, off), self._dram_blk(base, ld, r, c, esz),
                BN, BN * esz, BN * esz, ld * esz)
 
-    def _gemm(self, a_base, b_base, c_base, M, K, N_, name):
-        """C(MxN) = A(MxK)*B(KxN), all f16 in DRAM, C f16 out. Output block
-        (m,n) accumulated over K blocks on one tile (k ascending)."""
+    # Low-precision MMA timing model. Per MXU issue the operand footprint is
+    # a fixed 512 B slab, but a lower precision packs more of the K axis into
+    # it (INT8: 2 K-blocks, INT4: 4) => 2x/4x MAC throughput. eb = element
+    # bytes; kpo = K-blocks packed per issue; op = MXU opcode.
+    PREC = {
+        "f16": dict(eb=2.0, kpo=1, op="MXU_F16F16"),
+        "i8":  dict(eb=1.0, kpo=2, op="MXU_I8I8"),
+        "i4":  dict(eb=0.5, kpo=4, op="MXU_I4I4"),
+    }
+
+    def _gemm(self, a_base, b_base, c_base, M, K, N_, name, prec="f16"):
+        """C(MxN) = A(MxK)*B(KxN). Output block (m,n) accumulated over the K
+        axis on one tile. `prec` selects the MMA precision (timing model):
+        f16 processes one 16-K-block per MXU issue, i8 two, i4 four, with
+        DRAM operands sized at the precision's element width."""
         self._sync(reads=[a_base, b_base], writes=[c_base])
+        if prec != "f16":
+            return self._gemm_prec(a_base, b_base, c_base, M, K, N_, name, prec)
         mb, kb, nb = M // BN, K // BN, N_ // BN
         idx = 0
         for m in range(mb):
@@ -322,6 +336,54 @@ class Compiler:
             tp.dma_fence(keep=2 * ahead)  # current step's operands drained
             tp.mxu("MXU_F16F16", A[s], B[s], self.LC, kk > 0, name)
         tp.wait_mxu()                     # accumulator committed before convert
+
+    def _gemm_prec(self, a_base, b_base, c_base, M, K, N_, name, prec):
+        """Low-precision (INT8/INT4) GEMM, timing model. Each MXU issue packs
+        `kpo` K-blocks into the fixed 512 B operand slab, so a lower precision
+        needs proportionally fewer issues and moves fewer DRAM bytes. Reuses
+        the depth-D prefetch pipeline (P2)."""
+        p = self.PREC[prec]; eb = p["eb"]; kpo = p["kpo"]; op = p["op"]
+        kw = BN * kpo                     # K columns packed per issue
+        assert K % kw == 0, f"{prec} GEMM needs K ({K}) divisible by {kw}"
+        mb, nb, kops = M // BN, N_ // BN, K // kw
+        ib = lambda x: int(round(x))      # byte count (eb may be 0.5 for i4)
+
+        def load_A(tp, m, j, off):        # A slab: 16 rows x kw cols (M x K)
+            src = isa.dram(a_base + ib((m * BN * K + j * kw) * eb))
+            tp.dma(src, isa.local(tp.tid, off), BN, ib(kw * eb),
+                   ib(K * eb), ib(kw * eb))
+
+        def load_B(tp, j, n, off):        # B slab: kw rows x 16 cols (K x N)
+            src = isa.dram(b_base + ib((j * kw * N_ + n * BN) * eb))
+            tp.dma(src, isa.local(tp.tid, off), kw, ib(BN * eb),
+                   ib(N_ * eb), ib(BN * eb))
+
+        idx = 0
+        D = min(self.dbuf_depth, kops)
+        for m in range(mb):
+            for n in range(nb):
+                tp = self.b.t(self._tile_for(idx)); idx += 1
+                if self.dbuf and kops >= 2:
+                    A = [self.LA + i * 0x800 for i in range(D)]
+                    B = [self.LB + i * 0x800 for i in range(D)]
+                    for jp in range(D - 1):
+                        load_A(tp, m, jp, A[jp % D]); load_B(tp, jp, n, B[jp % D])
+                    for j in range(kops):
+                        s = j % D; nj = j + (D - 1)
+                        if nj < kops:
+                            load_A(tp, m, nj, A[nj % D]); load_B(tp, nj, n, B[nj % D])
+                        ahead = min(kops - 1, j + D - 1) - j
+                        tp.dma_fence(keep=2 * ahead)
+                        tp.mxu(op, A[s], B[s], self.LC, j > 0, name)
+                    tp.wait_mxu()
+                else:
+                    for j in range(kops):
+                        load_A(tp, m, j, self.LA); load_B(tp, j, n, self.LB)
+                        tp.dma_fence()
+                        tp.mxu(op, self.LA, self.LB, self.LC, j > 0, name)
+                        tp.wait_mxu()
+                tp.vpu("VPU_CVT_F32_F16", a=self.LC, d=self.LT2)
+                self._store_block(tp, self.LT2, c_base, N_, m, n)
 
     def _norm(self, x_base, out_base, S, dm):
         """RMSNorm/LayerNorm each row (width dm = dm/16 blocks). One row-

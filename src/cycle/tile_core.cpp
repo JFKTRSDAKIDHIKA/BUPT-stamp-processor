@@ -543,7 +543,9 @@ bool TileCore::issue_instr(const Instr& in, Cycle now) {
             return true;
 
         case Op::MXU_F16F16:
-        case Op::MXU_F32F16: {
+        case Op::MXU_F32F16:
+        case Op::MXU_I8I8:
+        case Op::MXU_I4I4: {
             if (now < mxu_next_issue_) { stats_.stall_mxu++; return false; }
             if (cfg_.compute_uses_sram_ports) {
                 if (rd_budget_ < 2) { stats_.sram_contention++; stats_.stall_mxu++; return false; }

@@ -19,7 +19,10 @@ from edgc.arch import load_arch, resolve_ramulator
 from edgc.compile import F16
 
 
-def build_gemm(M, K, N, out_dir, sched, ramulator, dbuf):
+EB = {"f16": 2.0, "i8": 1.0, "i4": 0.5}
+
+
+def build_gemm(M, K, N, out_dir, sched, ramulator, dbuf, prec="f16"):
     os.environ["EDGC_DBUF"] = "1" if dbuf else "0"
     cfg = ModelConfig(name=f"gemm_M{M}_K{K}_N{N}", d_model=64, n_layers=1,
                       n_heads=4, n_kv_heads=4, d_head=16, ffn_hidden=64,
@@ -29,18 +32,19 @@ def build_gemm(M, K, N, out_dir, sched, ramulator, dbuf):
                       wr_ports=sched.wr_ports, rd_ports=sched.rd_ports,
                       dma_rate=sched.dma_rate, dram_density=sched.dram_density,
                       nmc_enable=0)
-    a = comp.dalloc.alloc(M * K * F16)
-    b = comp.dalloc.alloc(K * N * F16)
+    eb = EB[prec]
+    a = comp.dalloc.alloc(int(M * K * eb))
+    b = comp.dalloc.alloc(int(K * N * eb))
     c = comp.dalloc.alloc(M * N * F16)
     # zero-fill operands so DRAM reads are valid (values irrelevant to timing)
-    comp.b.load_dram(a, b"\x00" * (M * K * F16))
-    comp.b.load_dram(b, b"\x00" * (K * N * F16))
-    comp._gemm(a, b, c, M, K, N, "bench")
+    comp.b.load_dram(a, b"\x00" * int(M * K * eb))
+    comp.b.load_dram(b, b"\x00" * int(K * N * eb))
+    comp._gemm(a, b, c, M, K, N, "bench", prec=prec)
     comp._barrier()
     for t in range(16):
         comp.b.t(t).halt()
     os.makedirs(out_dir, exist_ok=True)
-    base = os.path.join(out_dir, cfg.name + ("_db" if dbuf else "_sb"))
+    base = os.path.join(out_dir, f"{cfg.name}_{prec}_{'db' if dbuf else 'sb'}")
     comp.b.write_trace(base + ".trace")
     comp.b.write_mem(base + ".mem")
     return base
@@ -73,6 +77,8 @@ def main():
     ap.add_argument("--out", default="/tmp/edgc_gemm")
     ap.add_argument("--arch", default="")
     ap.add_argument("--csv", default="")
+    ap.add_argument("--int", action="store_true",
+                    help="precision sweep (f16/i8/i4) instead of the K sweep")
     args = ap.parse_args()
     arch = load_arch(args.arch)
     ram = resolve_ramulator(arch)
@@ -84,6 +90,31 @@ def main():
 
     M = N = 128
     rows = []
+    if args.int:
+        print(f"{'prec':>5}{'K':>6} | {'cycles':>7} {'mxu_ops':>8} {'dram_rd_KB':>11} "
+              f"{'vs_f16':>7} {'overlap%':>8} {'dmaBW%':>7}")
+        for K in (256, 512, 1024):
+            f16c = None
+            for prec in ("f16", "i8", "i4"):
+                base = build_gemm(M, K, N, args.out, sched, ram, dbuf=True, prec=prec)
+                s = run(args.sim, base, ram, args.out)
+                cyc, ovl, dbw = metrics(s)
+                if prec == "f16":
+                    f16c = cyc
+                print(f"{prec:>5}{K:>6} | {cyc:>7} {s['mxu_ops']:>8} "
+                      f"{s['dram_read_bytes']/1024:>10.1f} {f16c/cyc:>6.2f}x "
+                      f"{ovl:>7.1f} {dbw:>7.1f}")
+                rows.append(dict(prec=prec, M=M, K=K, N=N, cycles=cyc,
+                                 mxu_ops=s["mxu_ops"],
+                                 dram_read_kb=round(s["dram_read_bytes"]/1024, 1),
+                                 speedup_vs_f16=round(f16c/cyc, 4),
+                                 overlap_pct=round(ovl, 2), dma_bw_pct=round(dbw, 2)))
+        if args.csv:
+            import csv
+            with open(args.csv, "w", newline="") as f:
+                w = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
+                w.writeheader(); w.writerows(rows)
+        return
     print(f"{'M':>4}{'K':>6}{'N':>5} | {'cyc_sb':>7} {'cyc_db':>7} {'speedup':>7} | "
           f"{'ovl_sb%':>7} {'ovl_db%':>7} | {'dmaBW_sb%':>9} {'dmaBW_db%':>9}")
     for K in (128, 256, 512, 1024):

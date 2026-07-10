@@ -37,6 +37,16 @@ enum class Op : uint8_t {
     // internal accumulator; C in SRAM is committed at pipeline exit).
     MXU_F16F16,
     MXU_F32F16,
+    // Low-precision MMA (edge quantized inference). Same 16x16 systolic
+    // array, but a wider contraction per issue: INT8 packs 2 K-blocks
+    // (2x MAC throughput), INT4 packs 4 (4x). Operand blocks are the same
+    // 512 B LOCAL footprint per issue (16 x {32 int8 | 64 int4}); the
+    // throughput gain shows up as fewer MXU issues + smaller DRAM operands
+    // emitted by the compiler. Timing model only (values not checked).
+    //   MXU_I8I8: A int8, B int8 -> C int32
+    //   MXU_I4I4: A int4, B int4 -> C int32
+    MXU_I8I8,
+    MXU_I4I4,
     // Block until the MXU pipeline is empty (results committed to SRAM).
     WAIT_MXU,
 

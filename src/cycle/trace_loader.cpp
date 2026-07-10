@@ -64,6 +64,7 @@ struct KV {
 const std::unordered_map<std::string, Op> OPS = {
     {"NOP", Op::NOP}, {"DMA", Op::DMA}, {"DMA_FENCE", Op::DMA_FENCE},
     {"MXU_F16F16", Op::MXU_F16F16}, {"MXU_F32F16", Op::MXU_F32F16},
+    {"MXU_I8I8", Op::MXU_I8I8}, {"MXU_I4I4", Op::MXU_I4I4},
     {"WAIT_MXU", Op::WAIT_MXU},
     {"VPU_ADD_F32", Op::VPU_ADD_F32}, {"VPU_ADD_F16", Op::VPU_ADD_F16},
     {"VPU_CVT_F32_F16", Op::VPU_CVT_F32_F16}, {"VPU_CVT_F16_F32", Op::VPU_CVT_F16_F32},
