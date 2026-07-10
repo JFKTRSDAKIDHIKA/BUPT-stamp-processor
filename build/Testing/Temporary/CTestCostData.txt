@@ -1,0 +1,7 @@
+smoke_ramulator 6 0.00065593
+test_functional 7 0.0057105
+test_timing 7 0.0147928
+test_cycle_dual_gemm 6 0.0076743
+test_cycle_llm 6 0.0848644
+test_cycle_micro 7 0.0430574
+---

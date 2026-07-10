@@ -7,6 +7,7 @@ rtl/obj*
 build/src
 build/tests
 synth/obj_equiv
+pr/runs
 
 # -------------------- 编译中间文件 --------------------
 *.o
