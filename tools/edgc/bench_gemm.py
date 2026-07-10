@@ -36,9 +36,10 @@ def build_gemm(M, K, N, out_dir, sched, ramulator, dbuf, prec="f16"):
     a = comp.dalloc.alloc(int(M * K * eb))
     b = comp.dalloc.alloc(int(K * N * eb))
     c = comp.dalloc.alloc(M * N * F16)
-    # zero-fill operands so DRAM reads are valid (values irrelevant to timing)
-    comp.b.load_dram(a, b"\x00" * int(M * K * eb))
-    comp.b.load_dram(b, b"\x00" * int(K * N * eb))
+    # Operands are not materialized: the simulator's DRAM pool is zero-
+    # initialized and we only measure timing, so DRAM reads of `a`/`b`
+    # return zeros. (Loading real 100+ MB weight images would be pure I/O
+    # overhead with no effect on cycles.)
     comp._gemm(a, b, c, M, K, N, "bench", prec=prec)
     comp._barrier()
     for t in range(16):

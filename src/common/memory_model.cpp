@@ -29,9 +29,13 @@ MemoryModel::MemoryModel() {
 void MemoryModel::reset() {
     local_.assign(NUM_TILES, std::vector<uint8_t>(LOCAL_TILE_SIZE, 0));
     shared_.assign(NUM_BANKS, std::vector<uint8_t>(SHARED_BANK_SIZE, 0));
-    // DRAM: allocate 16 MB for milestone 1 (actual matrices are tiny)
-    // Full 16 GB would be wasteful; we only need enough for the workload.
-    dram_.assign(16 * 1024 * 1024, 0); // 16 MB
+    // DRAM backing pool. The edge-miniature workloads need only a few MB,
+    // but the Tier-1 real-shape decode harness references true weight
+    // tensors (a single Mixtral/Mistral FFN projection is ~120 MB). We are
+    // a timing model (values irrelevant), so a zero-initialized 512 MB pool
+    // is plenty and lets those shapes' DRAM addresses resolve without
+    // materializing the full 16 GB spec capacity.
+    dram_.assign(512ull * 1024 * 1024, 0); // 512 MB
     dram_write_bytes_ = 0;
     dram_read_bytes_ = 0;
 }
