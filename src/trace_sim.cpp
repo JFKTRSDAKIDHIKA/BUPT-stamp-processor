@@ -86,7 +86,25 @@ int main(int argc, char** argv) {
                   << ",\"dram_write_bytes\":" << s.dram_write_bytes
                   << ",\"dram_avg_read_latency\":" << s.dram_avg_read_latency
                   << ",\"causality_ok\":" << (s.causality_ok ? "true" : "false")
-                  << "}\n";
+                  << ",\"tiles\":[";
+        for (int t = 0; t < NUM_TILES; t++) {
+            const auto& ts = s.tiles[t];
+            std::cout << (t ? "," : "") << "{"
+                      << "\"instrs\":" << ts.instrs
+                      << ",\"busy\":" << ts.busy_cycles
+                      << ",\"stall_acquire\":" << ts.stall_acquire
+                      << ",\"stall_dma\":" << ts.stall_dma
+                      << ",\"stall_mxu\":" << ts.stall_mxu
+                      << ",\"stall_vpu\":" << ts.stall_vpu
+                      << ",\"stall_inject\":" << ts.stall_inject
+                      << ",\"idle_after_halt\":" << ts.idle_after_halt
+                      << ",\"mxu_ops\":" << ts.mxu_ops
+                      << ",\"mxu_busy\":" << ts.mxu_busy_cycles
+                      << ",\"vpu_busy\":" << ts.vpu_busy_cycles
+                      << ",\"dma_bytes\":" << ts.dma_bytes
+                      << "}";
+        }
+        std::cout << "]}\n";
     } else {
         chip.print_summary(s);
     }

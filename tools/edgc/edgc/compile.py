@@ -25,6 +25,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import List, Dict, Tuple
 import math
+import os
 from . import isa
 from . import numerics as N
 from .model import ModelConfig, Weights, _rope_tables, routing_decisions
@@ -73,6 +74,21 @@ class Compiler:
         self.act_a = self.dalloc.alloc(S * dm * F16)
         self.act_b = self.dalloc.alloc(S * dm * F16)
         self.scratch = {}      # named DRAM scratch
+        # ── Priority-1 barrier elimination ───────────────────────────
+        # Each primitive declares the DRAM buffers it reads/writes; _sync
+        # inserts a global barrier ONLY when the new primitive conflicts
+        # (RAW/WAR/WAW) with a buffer touched since the last barrier. This
+        # drops barriers between provably-independent primitives (the three
+        # QKV projections, independent MoE experts, ...) while preserving
+        # every real cross-tile data dependency. Mode "global" (env
+        # EDGC_BARRIER=global) forces a barrier before every primitive and
+        # reproduces the original phase-serialized schedule bit-for-bit —
+        # the A/B baseline. Default "dep" is the optimized schedule.
+        self.dep_barriers = os.environ.get("EDGC_BARRIER", "dep") != "global"
+        self._tr = set()       # DRAM buffers read   since last barrier
+        self._tw = set()       # DRAM buffers written since last barrier
+        self._emitted_any = False
+        self.barrier_count = 0
 
     # ── public entry ──
     def compile(self):
@@ -90,7 +106,10 @@ class Compiler:
         for l in range(cfg.n_layers):
             cur = self._layer(l, cur, nxt, routes)
             nxt = self.act_a if cur == self.act_b else self.act_b
-        # final activation is at `cur`
+        # final activation is at `cur`. One closing barrier fences every
+        # tile's outstanding store DMAs before halt so the `out` dump reads
+        # a fully-committed image (both modes; negligible vs. removed count).
+        self._barrier()
         S, dm = cfg.seq_len, cfg.d_model
         self.b.add_dump("out", cur - isa.DRAM_BASE if cur >= isa.DRAM_BASE else cur,
                         S * dm * F16)
@@ -185,9 +204,32 @@ class Compiler:
         return x_out
 
     # ── primitives (all block-parallel over tiles) ──
+    def _sync(self, reads=(), writes=()):
+        """Priority-1 dependency-aware barrier insertion. Emit a global
+        barrier before this primitive ONLY if it conflicts with a buffer
+        touched since the last barrier (RAW: reads a pending write; WAW:
+        overwrites a pending write; WAR: overwrites a pending read).
+        Read-read is not a conflict, so independent primitives that share
+        an input (QKV all read `xn`; MoE experts all read `hn`) run without
+        an intervening barrier. `global` mode forces a barrier before every
+        primitive, reproducing the original schedule."""
+        rd = {b for b in reads if b is not None}
+        wr = {b for b in writes if b is not None}
+        if self.dep_barriers:
+            conflict = bool(rd & self._tw) or bool(wr & self._tw) or bool(wr & self._tr)
+        else:
+            conflict = self._emitted_any  # barrier before every primitive
+        if conflict:
+            self._barrier()
+            self._tr.clear(); self._tw.clear()
+        self._tr |= rd
+        self._tw |= wr
+        self._emitted_any = True
+
     def _barrier(self):
         """Global barrier: every tile releases to tile0, tile0 waits, then
         releases back. Simple phase serialization."""
+        self.barrier_count += 1
         bt = self.tag; self.tag += 1
         # producers: all tiles release to tile 0
         for t in range(isa.NUM_TILES):
@@ -229,6 +271,7 @@ class Compiler:
     def _gemm(self, a_base, b_base, c_base, M, K, N_, name):
         """C(MxN) = A(MxK)*B(KxN), all f16 in DRAM, C f16 out. Output block
         (m,n) accumulated over K blocks on one tile (k ascending)."""
+        self._sync(reads=[a_base, b_base], writes=[c_base])
         mb, kb, nb = M // BN, K // BN, N_ // BN
         idx = 0
         for m in range(mb):
@@ -243,12 +286,12 @@ class Compiler:
                 # convert f32 acc -> f16 and store
                 tp.vpu("VPU_CVT_F32_F16", a=self.LC, d=self.LT2)
                 self._store_block(tp, self.LT2, c_base, N_, m, n)
-        self._barrier()
 
     def _norm(self, x_base, out_base, S, dm):
         """RMSNorm/LayerNorm each row (width dm = dm/16 blocks). One row-
         block (16 rows) per tile; norm needs the whole row so we load the
         dm-wide strip into BLOCKED layout and run VPU_*NORM_BLK."""
+        self._sync(reads=[x_base], writes=[out_base])
         op = "VPU_RMSNORM_BLK" if self.cfg.norm == "rmsnorm" else "VPU_LAYERNORM_F32"
         cnt = dm // BN
         rb = S // BN
@@ -277,7 +320,6 @@ class Compiler:
                 tp.vpu("VPU_CVT_F32_F16", a=src + c * 1024, d=self.LT2 + c * 512)
                 self._store_block(tp, self.LT2 + c * 512, out_base, dm, r, c)
             tp.dma_fence()
-        self._barrier()
 
     def _layernorm_rowmajor(self, tp, cnt):
         # gather blocked LA -> row-major LT (16 x 16*cnt f32), run LN, keep
@@ -302,6 +344,7 @@ class Compiler:
         tp.dma_fence()
 
     def _residual(self, a_base, b_base, out_base, S, dm):
+        self._sync(reads=[a_base, b_base], writes=[out_base])
         cnt = dm // BN
         rb = S // BN
         idx = 0
@@ -316,13 +359,13 @@ class Compiler:
                 tp.vpu("VPU_ADD_F32", a=self.LC, b=self.LT, d=self.LC)
                 tp.vpu("VPU_CVT_F32_F16", a=self.LC, d=self.LT2)
                 self._store_block(tp, self.LT2, out_base, dm, r, c)
-        self._barrier()
 
     def _rope(self, base, S, nheads, dmodel):
         # d_head == 16 => each head is exactly one 16-wide block; RoPE
         # rotates dim k with dim k+half inside that block.
         cfg = self.cfg
         assert cfg.d_head == BN, "compiler _rope assumes d_head == 16"
+        self._sync(reads=[base], writes=[base])
         half = cfg.d_head // 2
         rb = S // BN
         idx = 0
@@ -339,10 +382,10 @@ class Compiler:
                 tp.vpu("VPU_ROPE_F16", a=self.LA, d=self.LT2, count=half,
                        aux=self.LROPE)
                 self._store_block(tp, self.LT2, base, dmodel, r, col)
-        self._barrier()
 
     def _attention(self, q, k, v, ctx, l):
         cfg = self.cfg
+        self._sync(reads=[q, k, v], writes=[ctx])
         S, dm, dkv, dh = cfg.seq_len, cfg.d_model, cfg.d_kv, cfg.d_head
         gsz = cfg.group_size()
         # For edge sizes S<=16 (one block) and d_head=16 (one block): each
@@ -385,7 +428,6 @@ class Compiler:
                 tp.vpu("VPU_CVT_F32_F16", a=self.LC, d=self.LT2)
                 self._store_block(tp, self.LT2, ctx, dm, mi, qcol)
                 tp.dma_fence()  # store done before this tile reuses LT2
-        self._barrier()
 
     def _ffn(self, l, hn, res_base, out_base, routes, S, dm, ff):
         cfg = self.cfg
@@ -414,6 +456,7 @@ class Compiler:
         self._residual(res_base, down, out_base, S, dm)
 
     def _silu_gate(self, g_base, u_base, out_base, S, ff):
+        self._sync(reads=[g_base, u_base], writes=[out_base])
         cnt = ff // BN
         rb = S // BN
         idx = 0
@@ -429,9 +472,9 @@ class Compiler:
                 tp.vpu("VPU_MUL_F32", a=self.LC, b=self.LT, d=self.LC)
                 tp.vpu("VPU_CVT_F32_F16", a=self.LC, d=self.LT2)
                 self._store_block(tp, self.LT2, out_base, ff, r, c)
-        self._barrier()
 
     def _gelu(self, g_base, out_base, S, ff):
+        self._sync(reads=[g_base], writes=[out_base])
         cnt = ff // BN
         rb = S // BN
         idx = 0
@@ -444,7 +487,6 @@ class Compiler:
                 tp.vpu("VPU_GELU_F32", a=self.LC, d=self.LC)
                 tp.vpu("VPU_CVT_F32_F16", a=self.LC, d=self.LT2)
                 self._store_block(tp, self.LT2, out_base, ff, r, c)
-        self._barrier()
 
     def _moe(self, l, hn, res_base, out_base, routes, S, dm, ff):
         # Compute a zero-initialized accumulator in DRAM, add each expert's
@@ -488,6 +530,7 @@ class Compiler:
         # rows is wasteful; instead bake gate into a 16x16 f32 "gate block"
         # broadcast and multiply. For simplicity here: token == row, and a
         # block spans BN tokens, so emit a gate image and VPU_MUL.
+        self._sync(reads=[e_base, acc_base], writes=[acc_base])
         cnt = dm // BN
         rb = S // BN
         import struct
@@ -519,4 +562,3 @@ class Compiler:
                 tp.vpu("VPU_ADD_F32", a=self.LC, b=self.LB + 0x1000, d=self.LC)
                 tp.vpu("VPU_CVT_F32_F16", a=self.LC, d=self.LT2)
                 self._store_block(tp, self.LT2, acc_base, dm, r, c)
-        self._barrier()

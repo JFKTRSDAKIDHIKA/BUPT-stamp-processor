@@ -1,0 +1,7 @@
+model,cycles_baseline,cycles_p1,cycle_reduction_pct,speedup,acquire_stall_baseline,acquire_stall_p1,acquire_stall_reduction_pct,mxu_util_baseline_pct,mxu_util_p1_pct,mxu_tiles,active_tiles
+edge_dense,10387,9974,3.98,1.0414,129533,123770,4.45,0.6547,0.6818,8,16
+edge_gqa,11055,10603,4.09,1.0426,133018,129152,2.91,0.6875,0.7168,8,16
+edge_mqa,10884,10315,5.23,1.0552,134155,127040,5.3,0.6615,0.698,8,16
+edge_sliding,11055,10603,4.09,1.0426,133018,129152,2.91,0.6875,0.7168,8,16
+edge_moe,26983,24142,10.53,1.1177,298560,266234,10.83,0.8153,0.9113,8,16
+spec_target,22316,21109,5.41,1.0572,270197,255637,5.39,0.6811,0.7201,8,16

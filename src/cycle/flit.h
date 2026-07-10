@@ -13,6 +13,7 @@
 #include "common/types.h"
 #include <cstdint>
 #include <deque>
+#include <stdexcept>
 #include <vector>
 
 namespace mobol::cycle {
