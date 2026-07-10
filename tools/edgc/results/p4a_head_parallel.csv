@@ -1,0 +1,5 @@
+config,heads,d_head,ctx,tiles_single,cyc_single,tiles_hp,cyc_hp,tile_util_single_pct,tile_util_hp_pct,speedup
+Llama-1B,32,64,512,1,520055,16,95181,6.2,100.0,5.464
+Llama-3B,24,128,512,1,644766,16,165041,6.2,100.0,3.907
+Mistral-7B,32,128,512,1,859630,16,195518,6.2,100.0,4.397
+edge(4h),4,16,512,1,34501,4,9099,6.2,25.0,3.792
