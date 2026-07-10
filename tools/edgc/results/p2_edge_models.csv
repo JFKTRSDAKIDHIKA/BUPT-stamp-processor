@@ -1,0 +1,7 @@
+model,cycles_p1,cycles_p1p2,cycle_reduction_pct,speedup,overlap_ratio_pct,dma_bw_util_pct,mxu_util_pct
+edge_dense,9974,9029,9.47,1.1047,53.33,20.83,0.749
+edge_gqa,10603,9358,11.74,1.133,52.42,23.67,0.7988
+edge_mqa,10315,9009,12.66,1.145,52.38,21.06,0.7881
+edge_sliding,10603,9358,11.74,1.133,52.42,23.67,0.7988
+edge_moe,24142,21658,10.29,1.1147,48.18,29.46,0.9996
+spec_target,21109,18620,11.79,1.1337,50.77,22.57,0.8073

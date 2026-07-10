@@ -101,6 +101,8 @@ int main(int argc, char** argv) {
                       << ",\"mxu_ops\":" << ts.mxu_ops
                       << ",\"mxu_busy\":" << ts.mxu_busy_cycles
                       << ",\"vpu_busy\":" << ts.vpu_busy_cycles
+                      << ",\"dma_busy\":" << ts.dma_busy_cycles
+                      << ",\"mxu_dma_overlap\":" << ts.mxu_dma_overlap_cycles
                       << ",\"dma_bytes\":" << ts.dma_bytes
                       << "}";
         }

@@ -116,6 +116,12 @@ struct Instr {
     float scalar = 0.0f;      ///< VPU scale/softmax/layernorm parameter
     uint32_t count = 1;       ///< VPU_LAYERNORM: blocks per row group
 
+    // DMA_FENCE partial drain: stall only until <= `keep` DMA descriptors
+    // remain outstanding (keep=0 => wait for all, the classic full fence).
+    // Enables double-buffering: prefetch the next slot while the current
+    // slot's loads drain.
+    uint32_t keep = 0;
+
     // Sync
     uint32_t tag = 0;         ///< tag index (scoped to consumer tile)
     TileId consumer = 0;      ///< RELEASE: tile whose counter to bump

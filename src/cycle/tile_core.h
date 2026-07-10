@@ -33,6 +33,7 @@
 #include "common/memory_model.h"
 
 #include <deque>
+#include <map>
 #include <unordered_map>
 #include <vector>
 
@@ -61,6 +62,8 @@ struct TileStats {
     uint64_t mxu_ops = 0;
     Cycle mxu_busy_cycles = 0;     ///< cycles with >=1 op in the MXU pipe
     Cycle vpu_busy_cycles = 0;
+    Cycle dma_busy_cycles = 0;     ///< cycles the DMA engine was moving data
+    Cycle mxu_dma_overlap_cycles = 0; ///< cycles MXU busy AND DMA busy
     uint64_t dma_descriptors = 0;
     uint64_t dma_bytes = 0;
     uint64_t sram_ingress_writes = 0;
@@ -133,8 +136,11 @@ private:
     bool dma_active_ = false;
     DmaDesc dma_cur_;
     struct DescState { uint32_t outstanding = 0; bool gen_done = false;
-                       Cycle start = 0; uint64_t bytes = 0; };
-    std::unordered_map<uint32_t, DescState> live_descs_;
+                       bool done = false; Cycle start = 0; uint64_t bytes = 0; };
+    // Ordered by descriptor seq so descriptors retire in strict issue order
+    // (a `DMA_FENCE keep=N` then sees a monotone oldest-first outstanding
+    // set, which is what makes double-buffer prefetch correct).
+    std::map<uint32_t, DescState> live_descs_;
     uint32_t inflight_chunks_ = 0;  ///< chip-bound sub-txns awaiting ack/data
     uint32_t next_seq_ = 1;
     uint32_t sync_wait_seq_ = 0;   ///< nonzero: sequencer blocked on this DMA

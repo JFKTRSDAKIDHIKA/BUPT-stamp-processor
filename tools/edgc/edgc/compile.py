@@ -89,6 +89,12 @@ class Compiler:
         self._tw = set()       # DRAM buffers written since last barrier
         self._emitted_any = False
         self.barrier_count = 0
+        # P2: multi-buffered GEMM inner loop (prefetch operands D-1 steps
+        # ahead while the MXU computes). EDGC_DBUF=0 disables (single-buffer
+        # A/B path). EDGC_DBUF_DEPTH sets the number of slots (2 = classic
+        # double buffer); deeper hides DRAM read latency to saturate the bond.
+        self.dbuf = os.environ.get("EDGC_DBUF", "1") != "0"
+        self.dbuf_depth = max(2, min(8, int(os.environ.get("EDGC_DBUF_DEPTH", "3"))))
 
     # ── public entry ──
     def compile(self):
@@ -277,15 +283,45 @@ class Compiler:
         for m in range(mb):
             for n in range(nb):
                 tp = self.b.t(self._tile_for(idx)); idx += 1
-                for kk in range(kb):
-                    self._load_block(tp, a_base, K, m, kk, self.LA)
-                    self._load_block(tp, b_base, N_, kk, n, self.LB)
-                    tp.dma_fence()
-                    tp.mxu("MXU_F16F16", self.LA, self.LB, self.LC, kk > 0, name)
-                    tp.wait_mxu()
+                if self.dbuf and kb >= 2:
+                    self._gemm_block_dbuf(tp, a_base, b_base, K, N_, m, n, kb, name)
+                else:
+                    for kk in range(kb):
+                        self._load_block(tp, a_base, K, m, kk, self.LA)
+                        self._load_block(tp, b_base, N_, kk, n, self.LB)
+                        tp.dma_fence()
+                        tp.mxu("MXU_F16F16", self.LA, self.LB, self.LC, kk > 0, name)
+                        tp.wait_mxu()
                 # convert f32 acc -> f16 and store
                 tp.vpu("VPU_CVT_F32_F16", a=self.LC, d=self.LT2)
                 self._store_block(tp, self.LT2, c_base, N_, m, n)
+
+    def _gemm_block_dbuf(self, tp, a_base, b_base, K, N_, m, n, kb, name):
+        """One output block via a depth-D multi-buffered K-loop. D operand
+        slots; the loop keeps D-1 K-steps prefetched ahead while the MXU
+        computes the current step. `DMA_FENCE keep=2*ahead` drains only the
+        current step's operands (the oldest outstanding) and leaves the
+        prefetched steps in flight, so the DMA engine overlaps the MXU and
+        stays fed across DRAM read latency. No WAIT_MXU between steps: the
+        MXU's in-flight accumulator forwarding chains the k-accumulation."""
+        D = min(self.dbuf_depth, kb)
+        A = [self.LA + i * 0x800 for i in range(D)]  # D A slots (512 B blocks)
+        B = [self.LB + i * 0x800 for i in range(D)]  # D B slots
+        # prologue: prefetch the first D-1 steps
+        for j in range(D - 1):
+            self._load_block(tp, a_base, K, m, j, A[j % D])
+            self._load_block(tp, b_base, N_, j, n, B[j % D])
+        for kk in range(kb):
+            s = kk % D
+            nj = kk + (D - 1)             # step to prefetch this iteration
+            if nj < kb:
+                self._load_block(tp, a_base, K, m, nj, A[nj % D])
+                self._load_block(tp, b_base, N_, nj, n, B[nj % D])
+            # steps still allowed outstanding ahead of the current step
+            ahead = min(kb - 1, kk + D - 1) - kk
+            tp.dma_fence(keep=2 * ahead)  # current step's operands drained
+            tp.mxu("MXU_F16F16", A[s], B[s], self.LC, kk > 0, name)
+        tp.wait_mxu()                     # accumulator committed before convert
 
     def _norm(self, x_base, out_base, S, dm):
         """RMSNorm/LayerNorm each row (width dm = dm/16 blocks). One row-

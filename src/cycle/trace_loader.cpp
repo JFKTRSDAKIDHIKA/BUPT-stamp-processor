@@ -145,6 +145,7 @@ TraceProgram load_trace(const std::string& path, const CycleConfig& base) {
         in.acc = kv.u("acc", line, raw, 0, false) != 0;
         in.scalar = kv.f("scalar", 0.0f);
         in.count = static_cast<uint32_t>(kv.u("count", line, raw, 1, false));
+        in.keep = static_cast<uint32_t>(kv.u("keep", line, raw, 0, false));
         in.tag = static_cast<uint32_t>(kv.u("tag", line, raw, 0, false));
         in.consumer = static_cast<TileId>(kv.u("consumer", line, raw, 0, false));
         in.arity = static_cast<uint32_t>(kv.u("arity", line, raw, 0, false));

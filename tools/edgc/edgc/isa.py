@@ -90,8 +90,13 @@ class TileProgram:
     def dma_linear(self, src, dst, nbytes, note=""):
         self.dma(src, dst, 1, nbytes, 0, 0, note)
 
-    def dma_fence(self):
-        self.emit("DMA_FENCE")
+    def dma_fence(self, keep=0):
+        # keep>0: partial drain — stall only until <=keep DMA descriptors
+        # remain outstanding (double-buffer prefetch stays in flight).
+        if keep:
+            self.emit("DMA_FENCE", keep=keep)
+        else:
+            self.emit("DMA_FENCE")
 
     # ── MXU ──
     def mxu(self, op, a, b, d, acc, note=""):

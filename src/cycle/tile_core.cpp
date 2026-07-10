@@ -43,6 +43,13 @@ bool TileCore::tick(Cycle now) {
 
     if (!mxu_pipe_.empty()) stats_.mxu_busy_cycles++;
     if (vpu_busy_until_ > now) stats_.vpu_busy_cycles++;
+    // Overlap accounting (double-buffer effectiveness): a cycle where the
+    // DMA engine is moving data AND the MXU pipe is non-empty is compute
+    // overlapping memory. dma_busy = steady-state DMA-engine occupancy.
+    if (dma_active_) {
+        stats_.dma_busy_cycles++;
+        if (!mxu_pipe_.empty()) stats_.mxu_dma_overlap_cycles++;
+    }
     return progressed_;
 }
 
@@ -461,8 +468,14 @@ void TileCore::desc_check_done(uint32_t seq, Cycle now) {
     auto it = live_descs_.find(seq);
     if (it == live_descs_.end()) return;
     if (!it->second.gen_done || it->second.outstanding != 0) return;
-    ev_.dmas.push_back({id_, seq, it->second.start, now, it->second.bytes});
-    live_descs_.erase(it);
+    it->second.done = true;
+    // Retire in strict issue order (live_descs_ is seq-ordered): a later
+    // descriptor that finishes early waits for all earlier ones to retire
+    // first, so the outstanding count is always the N most-recently-issued.
+    for (auto f = live_descs_.begin(); f != live_descs_.end() && f->second.done; ) {
+        ev_.dmas.push_back({id_, f->first, f->second.start, now, f->second.bytes});
+        f = live_descs_.erase(f);
+    }
 }
 
 bool TileCore::dma_all_done() const {
@@ -523,7 +536,10 @@ bool TileCore::issue_instr(const Instr& in, Cycle now) {
         }
 
         case Op::DMA_FENCE:
-            if (!dma_all_done()) { stats_.stall_dma++; return false; }
+            // Partial drain: block until <= keep descriptors remain (keep=0
+            // is the classic full fence). live_descs_ holds every not-yet-
+            // complete descriptor, so its size is the outstanding count.
+            if (live_descs_.size() > in.keep) { stats_.stall_dma++; return false; }
             return true;
 
         case Op::MXU_F16F16:

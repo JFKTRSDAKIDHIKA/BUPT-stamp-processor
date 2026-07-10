@@ -94,8 +94,18 @@ def main():
         }
         # Aggregate stall attribution across active tiles (cycle-sums).
         for k in ("busy", "stall_acquire", "stall_dma", "stall_mxu",
-                  "stall_vpu", "stall_inject", "mxu_busy", "vpu_busy"):
+                  "stall_vpu", "stall_inject", "mxu_busy", "vpu_busy",
+                  "dma_busy", "mxu_dma_overlap"):
             row["sum_" + k] = sum(t[k] for t in tiles)
+        # P2 metrics. DMA-BW util = DMA-engine-busy share of runtime over the
+        # tiles that move data. Overlap ratio = MXU-busy cycles that ran
+        # concurrently with the DMA engine (compute hidden under memory).
+        dma_tiles = [t for t in tiles if t["dma_busy"] > 0]
+        row["dma_bw_util_pct"] = (100.0 * sum(t["dma_busy"] for t in dma_tiles)
+                                  / (len(dma_tiles) * cyc)) if dma_tiles else 0.0
+        smxu = row["sum_mxu_busy"]
+        row["overlap_ratio_pct"] = (100.0 * row["sum_mxu_dma_overlap"] / smxu
+                                    if smxu else 0.0)
         rows.append(row)
 
     print(json.dumps(rows, indent=2))
