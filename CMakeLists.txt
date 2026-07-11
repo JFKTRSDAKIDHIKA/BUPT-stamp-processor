@@ -16,6 +16,28 @@ add_compile_options(-Wno-unused-parameter)
 # analysis so those reinterpret casts are well-defined at any -O level.
 add_compile_options(-fno-strict-aliasing)
 
+# ─── Structural DSE knobs (compile-time; one build dir per variant) ───
+set(MOBOL_NUM_TILES 16 CACHE STRING "Compute tiles on the base die (power of two)")
+set(MOBOL_TILES_PER_GROUP 4 CACHE STRING "Tiles sharing one bank/DRAM column")
+set(MOBOL_SHARED_MB 8 CACHE STRING "Shared scratchpad MB per buffer-die bank")
+set(MOBOL_TOPOLOGY ring CACHE STRING "Base-die NoC topology: ring|mesh|torus")
+if(MOBOL_TOPOLOGY STREQUAL "ring")
+  set(MOBOL_TOPOLOGY_ID 0)
+elseif(MOBOL_TOPOLOGY STREQUAL "mesh")
+  set(MOBOL_TOPOLOGY_ID 1)
+elseif(MOBOL_TOPOLOGY STREQUAL "torus")
+  set(MOBOL_TOPOLOGY_ID 2)
+else()
+  message(FATAL_ERROR "MOBOL_TOPOLOGY must be ring, mesh or torus")
+endif()
+add_compile_definitions(
+  MOBOL_NUM_TILES=${MOBOL_NUM_TILES}
+  MOBOL_TILES_PER_GROUP=${MOBOL_TILES_PER_GROUP}
+  MOBOL_SHARED_MB=${MOBOL_SHARED_MB}
+  MOBOL_TOPOLOGY=${MOBOL_TOPOLOGY_ID}
+)
+message(STATUS "MOBOL structural: tiles=${MOBOL_NUM_TILES} tiles/group=${MOBOL_TILES_PER_GROUP} shared=${MOBOL_SHARED_MB}MB topology=${MOBOL_TOPOLOGY}")
+
 # ─── Build type default ───────────────────────────────────────
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "" FORCE)

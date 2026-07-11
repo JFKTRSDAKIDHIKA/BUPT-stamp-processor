@@ -22,7 +22,8 @@ from edgc.compile import F16
 EB = {"f16": 2.0, "i8": 1.0, "i4": 0.5}
 
 
-def build_gemm(M, K, N, out_dir, sched, ramulator, dbuf, prec="f16"):
+def build_gemm(M, K, N, out_dir, sched, ramulator, dbuf, prec="f16",
+               b_shared=False):
     os.environ["EDGC_DBUF"] = "1" if dbuf else "0"
     cfg = ModelConfig(name=f"gemm_M{M}_K{K}_N{N}", d_model=64, n_layers=1,
                       n_heads=4, n_kv_heads=4, d_head=16, ffn_hidden=64,
@@ -34,18 +35,23 @@ def build_gemm(M, K, N, out_dir, sched, ramulator, dbuf, prec="f16"):
                       nmc_enable=0)
     eb = EB[prec]
     a = comp.dalloc.alloc(int(M * K * eb))
-    b = comp.dalloc.alloc(int(K * N * eb))
+    # b_shared: the B operand is steady-state resident in the buffer-die
+    # banks (decode KV cache); tiles pull it from their NEAR bank at offset
+    # 0 instead of from DRAM. Otherwise B lives in DRAM as before.
+    b = 0 if b_shared else comp.dalloc.alloc(int(K * N * eb))
     c = comp.dalloc.alloc(M * N * F16)
     # Operands are not materialized: the simulator's DRAM pool is zero-
     # initialized and we only measure timing, so DRAM reads of `a`/`b`
     # return zeros. (Loading real 100+ MB weight images would be pure I/O
     # overhead with no effect on cycles.)
-    comp._gemm(a, b, c, M, K, N, "bench", prec=prec)
+    comp._gemm(a, b, c, M, K, N, "bench", prec=prec, b_shared=b_shared)
     comp._barrier()
-    for t in range(16):
+    from edgc import isa
+    for t in range(isa.NUM_TILES):
         comp.b.t(t).halt()
     os.makedirs(out_dir, exist_ok=True)
-    base = os.path.join(out_dir, f"{cfg.name}_{prec}_{'db' if dbuf else 'sb'}")
+    base = os.path.join(out_dir, f"{cfg.name}_{prec}_"
+                        f"{'db' if dbuf else 'sb'}{'_kvsh' if b_shared else ''}")
     comp.b.write_trace(base + ".trace")
     comp.b.write_mem(base + ".mem")
     return base

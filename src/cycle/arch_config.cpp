@@ -2,6 +2,7 @@
 /// @brief Unified architecture YAML loader.
 
 #include "cycle/arch_config.h"
+#include "common/address.h"
 
 #include <yaml-cpp/yaml.h>
 
@@ -48,6 +49,16 @@ CycleConfig load_arch_config(const std::string& path) {
         expect_eq(s, "num_tiles", NUM_TILES, "NUM_TILES");
         expect_eq(s, "num_banks", NUM_BANKS, "NUM_BANKS");
         expect_eq(s, "tiles_per_group", TILES_PER_GROUP, "TILES_PER_GROUP");
+        expect_eq(s, "shared_mb", SHARED_MB, "SHARED_MB");
+        if (s["topology"]) {
+            std::string t = s["topology"].as<std::string>();
+            if (t != MOBOL_TOPOLOGY_NAME) {
+                fail("structural.topology = " + t
+                     + " but this build was compiled with topology = "
+                     + MOBOL_TOPOLOGY_NAME
+                     + ". Topology is compile-time; rebuild to change it.");
+            }
+        }
         expect_eq(s, "mxu_m", MXU_M, "MXU_M");
         expect_eq(s, "mxu_n", MXU_N, "MXU_N");
         expect_eq(s, "mxu_k", MXU_K, "MXU_K");

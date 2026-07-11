@@ -16,6 +16,8 @@ structural:
   num_tiles: 16          # compute tiles on the base die
   num_banks: 4           # shared-scratchpad banks on the buffer die
   tiles_per_group: 4     # tiles sharing one bank / one DRAM column
+  shared_mb: 8           # shared scratchpad MB per bank (offset bit width)
+  topology: ring         # base-die NoC: ring | mesh | torus
   mxu_m: 16              # MXU native tile dimensions (M x N x K)
   mxu_n: 16
   mxu_k: 16

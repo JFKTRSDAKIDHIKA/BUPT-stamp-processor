@@ -20,13 +20,13 @@ static constexpr uint64_t extract_bits(Addr addr, int hi, int lo) {
 Addr make_local_addr(TileId tile, Addr offset) {
     assert(tile < NUM_TILES);
     assert(offset < LOCAL_TILE_SIZE);
-    return LOCAL_BASE | (Addr{tile} << 33) | offset;
+    return LOCAL_BASE | (Addr{tile} << TILE_SEL_LO) | offset;
 }
 
 Addr make_shared_addr(BankId bank, Addr offset) {
     assert(bank < NUM_BANKS);
     assert(offset < SHARED_BANK_SIZE);
-    return SHARED_BASE | (Addr{bank} << 35) | offset;
+    return SHARED_BASE | (Addr{bank} << BANK_SEL_LO) | offset;
 }
 
 Addr make_dram_addr(Addr offset) {
@@ -50,20 +50,20 @@ Segment get_segment(Addr addr) {
 }
 
 TileId get_local_tile(Addr addr) {
-    return static_cast<TileId>(extract_bits(addr, 36, 33));
+    return static_cast<TileId>(extract_bits(addr, 36, TILE_SEL_LO));
 }
 
 BankId get_shared_bank(Addr addr) {
-    return static_cast<BankId>(extract_bits(addr, 36, 35));
+    return static_cast<BankId>(extract_bits(addr, 36, BANK_SEL_LO));
 }
 
 Addr get_offset(Addr addr) {
     Segment seg = get_segment(addr);
     switch (seg) {
         case Segment::LOCAL:
-            return addr & (LOCAL_TILE_SIZE - 1);  // low 18 bits
+            return addr & (LOCAL_TILE_SIZE - 1);  // low LOCAL_OFF_BITS bits
         case Segment::SHARED:
-            return addr & (SHARED_BANK_SIZE - 1); // low 23 bits
+            return addr & (SHARED_BANK_SIZE - 1); // low SHARED_OFF_BITS bits
         case Segment::DRAM:
             return addr & (DRAM_POOL_SIZE - 1);   // low 34 bits
         default:
@@ -100,7 +100,7 @@ AddrFields decode_addr(Addr addr) {
 
 GroupId tile_group(TileId tile_id) {
     assert(tile_id < NUM_TILES);
-    return static_cast<GroupId>(tile_id >> 2);
+    return static_cast<GroupId>(tile_id >> TILES_PER_GROUP_LOG2);
 }
 
 bool is_shared_near(Addr addr, TileId tile_id) {
@@ -113,14 +113,21 @@ bool is_canonical_addr(Addr addr) {
     Segment seg = get_segment(addr);
     switch (seg) {
         case Segment::LOCAL: {
-            // Hole bits [32:18] must be zero
-            uint64_t hole = extract_bits(addr, 32, 18);
-            return hole == 0 && get_offset(addr) < LOCAL_TILE_SIZE;
+            // Hole bits [TILE_SEL_LO-1:LOCAL_OFF_BITS] must be zero and the
+            // selector must name an existing tile (the field may be wider
+            // than clog2(NUM_TILES) for small tile counts).
+            uint64_t hole = TILE_SEL_LO > LOCAL_OFF_BITS
+                ? extract_bits(addr, TILE_SEL_LO - 1, LOCAL_OFF_BITS) : 0;
+            return hole == 0 && get_local_tile(addr) < NUM_TILES
+                && get_offset(addr) < LOCAL_TILE_SIZE;
         }
         case Segment::SHARED: {
-            // Hole bits [34:23] must be zero
-            uint64_t hole = extract_bits(addr, 34, 23);
-            return hole == 0 && get_offset(addr) < SHARED_BANK_SIZE;
+            // Hole bits [BANK_SEL_LO-1:SHARED_OFF_BITS] must be zero and the
+            // selector must name an existing bank.
+            uint64_t hole = BANK_SEL_LO > SHARED_OFF_BITS
+                ? extract_bits(addr, BANK_SEL_LO - 1, SHARED_OFF_BITS) : 0;
+            return hole == 0 && get_shared_bank(addr) < NUM_BANKS
+                && get_offset(addr) < SHARED_BANK_SIZE;
         }
         case Segment::DRAM: {
             // Hole bits [36:34] must be zero

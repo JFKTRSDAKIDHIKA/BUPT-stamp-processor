@@ -8,6 +8,10 @@ build/src
 build/tests
 synth/obj_equiv
 pr/runs
+dse_bo/builds
+dse_bo/cache
+dse_bo/cache_matrix
+dse_bo/results
 
 # -------------------- 编译中间文件 --------------------
 *.o

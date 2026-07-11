@@ -13,6 +13,14 @@ set_target_properties(smoke_ramulator PROPERTIES
   INSTALL_RPATH "${RAMULATOR2_DIR}"
 )
 
+# ─── Parameterized PGAS address encoding test ─────────────────
+add_executable(test_address test_address.cpp)
+target_link_libraries(test_address PRIVATE mobol_common ramulator2)
+target_include_directories(test_address PRIVATE
+  ${CMAKE_SOURCE_DIR}/src
+  ${RAMULATOR2_EXT_INCLUDES}
+)
+
 # ─── §5.1 Functional Correctness Test ─────────────────────────
 add_executable(test_functional test_functional.cpp)
 target_link_libraries(test_functional PRIVATE
@@ -78,13 +86,20 @@ target_include_directories(test_cycle_micro PRIVATE
 # Register as CTest
 add_test(NAME smoke_ramulator COMMAND smoke_ramulator
   "${CMAKE_SOURCE_DIR}/config/ramulator_smoke.yaml")
+add_test(NAME test_address COMMAND test_address)
 add_test(NAME test_functional COMMAND test_functional)
 add_test(NAME test_timing COMMAND test_timing)
 set_tests_properties(test_timing PROPERTIES
   WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
+# The llm / dual_gemm known-answer workloads encode a fixed 16-tile /
+# 4-bank dataflow (hardcoded tile roles); they are only valid — and only
+# registered — for that structure. Variant builds are gated by the
+# structure-generic tests plus the edgc golden==sim bit-exact check.
+if(MOBOL_NUM_TILES EQUAL 16 AND MOBOL_TILES_PER_GROUP EQUAL 4)
 add_test(NAME test_cycle_dual_gemm COMMAND test_cycle_dual_gemm
   "${CMAKE_SOURCE_DIR}/config/ramulator_3d_dram.yaml")
 add_test(NAME test_cycle_llm COMMAND test_cycle_llm
   "${CMAKE_SOURCE_DIR}/config/ramulator_3d_dram.yaml")
+endif()
 add_test(NAME test_cycle_micro COMMAND test_cycle_micro
   "${CMAKE_SOURCE_DIR}/config/ramulator_3d_dram.yaml")

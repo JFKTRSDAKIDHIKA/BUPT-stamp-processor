@@ -13,7 +13,7 @@ from typing import Dict, List, Optional
 # Topology comes from the unified architecture YAML (config/mobol_arch.yaml)
 # via edgc.arch, so it is not hardcoded here. The address-encoding bases are
 # fixed by the PGAS spec (address.h) and are constants.
-from .arch import load_arch as _load_arch
+from .arch import load_arch as _load_arch, clog2 as _clog2
 
 try:
     _ARCH = _load_arch()
@@ -22,22 +22,31 @@ try:
     TILES_PER_GROUP = _ARCH.tiles_per_group
     LOCAL_SIZE = _ARCH.local_bytes
     SHARED_SIZE = _ARCH.shared_bytes
+    _TILE_SEL_LO = _ARCH.tile_sel_lo
+    _BANK_SEL_LO = _ARCH.bank_sel_lo
 except Exception:
+    import os as _os
+    if _os.environ.get("MOBOL_ARCH_YAML"):
+        raise  # a DSE variant must never silently fall back to baseline
     NUM_TILES, NUM_BANKS, TILES_PER_GROUP = 16, 4, 4
     LOCAL_SIZE, SHARED_SIZE = 1 << 18, 1 << 23
+    _TILE_SEL_LO, _BANK_SEL_LO = 33, 35
 
 LOCAL_BASE = 0x20 << 32
-LOCAL_STRIDE = 0x2 << 32
+LOCAL_STRIDE = 1 << _TILE_SEL_LO   # baseline: 0x2_0000_0000
 SHARED_BASE = 0x40 << 32
-SHARED_STRIDE = 0x8 << 31
+SHARED_STRIDE = 1 << _BANK_SEL_LO  # baseline: 0x8_0000_0000
 DRAM_BASE = 0x80 << 32
+_TPG_LOG2 = _clog2(TILES_PER_GROUP)
 
 
 def local(tile: int, off: int) -> int:
+    assert 0 <= tile < NUM_TILES and 0 <= off < LOCAL_SIZE
     return LOCAL_BASE + tile * LOCAL_STRIDE + off
 
 
 def shared(bank: int, off: int) -> int:
+    assert 0 <= bank < NUM_BANKS and 0 <= off < SHARED_SIZE
     return SHARED_BASE + bank * SHARED_STRIDE + off
 
 
@@ -46,7 +55,7 @@ def dram(off: int) -> int:
 
 
 def tile_group(tile: int) -> int:
-    return tile >> 2
+    return tile >> _TPG_LOG2
 
 
 # NmcOp enum values (src/cycle/flit.h)

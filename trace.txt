@@ -93,166 +93,166 @@
       30 | RELEASE        | T 2 | tag=0 cnt=1
       30 | RELEASE        | T 3 | tag=0 cnt=1
       30 | DMA_START      | T 4 | src=0x2800000400 dst=0x2000000000 bytes=1024
-      52 | DMA_COMPLETE   | T 4 | src=0x0 dst=0x0 bytes=0
+      49 | DMA_COMPLETE   | T 4 | src=0x0 dst=0x0 bytes=0
       30 | DMA_START      | T 5 | src=0x2a00000400 dst=0x2200000000 bytes=1024
-      52 | DMA_COMPLETE   | T 5 | src=0x0 dst=0x0 bytes=0
+      49 | DMA_COMPLETE   | T 5 | src=0x0 dst=0x0 bytes=0
       30 | DMA_START      | T 6 | src=0x2c00000400 dst=0x2400000000 bytes=1024
-      52 | DMA_COMPLETE   | T 6 | src=0x0 dst=0x0 bytes=0
+      49 | DMA_COMPLETE   | T 6 | src=0x0 dst=0x0 bytes=0
       30 | DMA_START      | T 7 | src=0x2e00000400 dst=0x2600000000 bytes=1024
-      52 | DMA_COMPLETE   | T 7 | src=0x0 dst=0x0 bytes=0
-      52 | RELEASE        | T 4 | tag=0 cnt=2
-      52 | RELEASE        | T 5 | tag=0 cnt=2
-      52 | RELEASE        | T 6 | tag=0 cnt=2
-      52 | RELEASE        | T 7 | tag=0 cnt=2
-      53 | ACQUIRE_PASS   | T 0 | tag=0 arity=2 cnt=2
-      53 | ACQUIRE_PASS   | T 1 | tag=0 arity=2 cnt=2
-      53 | ACQUIRE_PASS   | T 2 | tag=0 arity=2 cnt=2
-      53 | ACQUIRE_PASS   | T 3 | tag=0 arity=2 cnt=2
-      53 | DMA_START      | T 4 | src=0x4000000000 dst=0x2800000000 bytes=1024
-      68 | DMA_COMPLETE   | T 4 | src=0x0 dst=0x0 bytes=0
-      53 | DMA_START      | T 5 | src=0x4000000000 dst=0x2a00000000 bytes=1024
-      69 | DMA_COMPLETE   | T 5 | src=0x0 dst=0x0 bytes=0
-      53 | DMA_START      | T 6 | src=0x4000000000 dst=0x2c00000000 bytes=1024
-      70 | DMA_COMPLETE   | T 6 | src=0x0 dst=0x0 bytes=0
-      53 | DMA_START      | T 7 | src=0x4000000000 dst=0x2e00000000 bytes=1024
-      71 | DMA_COMPLETE   | T 7 | src=0x0 dst=0x0 bytes=0
-      54 | DMA_START      | T 0 | src=0x0 dst=0x0 bytes=0
-      56 | DMA_COMPLETE   | T 0 | src=0x0 dst=0x0 bytes=0
-      54 | DMA_START      | T 1 | src=0x0 dst=0x0 bytes=0
-      56 | DMA_COMPLETE   | T 1 | src=0x0 dst=0x0 bytes=0
-      54 | DMA_START      | T 2 | src=0x0 dst=0x0 bytes=0
-      56 | DMA_COMPLETE   | T 2 | src=0x0 dst=0x0 bytes=0
-      54 | DMA_START      | T 3 | src=0x0 dst=0x0 bytes=0
-      56 | DMA_COMPLETE   | T 3 | src=0x0 dst=0x0 bytes=0
-      56 | DMA_START      | T 0 | src=0x2000000400 dst=0x4000000000 bytes=1024
-      67 | DMA_COMPLETE   | T 0 | src=0x0 dst=0x0 bytes=0
-      56 | DMA_START      | T 1 | src=0x2200000400 dst=0x4000000000 bytes=1024
-      67 | DMA_COMPLETE   | T 1 | src=0x0 dst=0x0 bytes=0
-      56 | DMA_START      | T 2 | src=0x2400000400 dst=0x4000000000 bytes=1024
-      67 | DMA_COMPLETE   | T 2 | src=0x0 dst=0x0 bytes=0
-      56 | DMA_START      | T 3 | src=0x2600000400 dst=0x4000000000 bytes=1024
-      67 | DMA_COMPLETE   | T 3 | src=0x0 dst=0x0 bytes=0
-      67 | RELEASE        | T 0 | tag=1 cnt=1
-      67 | RELEASE        | T 1 | tag=1 cnt=1
-      67 | RELEASE        | T 2 | tag=1 cnt=1
-      67 | RELEASE        | T 3 | tag=1 cnt=1
-      68 | ACQUIRE_PASS   | T 0 | tag=1 arity=1 cnt=1
-      68 | ACQUIRE_PASS   | T 1 | tag=1 arity=1 cnt=1
-      68 | ACQUIRE_PASS   | T 2 | tag=1 arity=1 cnt=1
-      68 | ACQUIRE_PASS   | T 3 | tag=1 arity=1 cnt=1
-      68 | DMA_START      | T 4 | src=0x8000002000 dst=0x2800000400 bytes=512
-      68 | DRAM_REQ_SENT  | T 4 | addr=0x8000002000 bytes=512 dram_lat=37
-      81 | DRAM_REQ_DONE  | T 4 | addr=0x8000002000 bytes=512 dram_lat=37
-      81 | DMA_COMPLETE   | T 4 | src=0x8000002000 dst=0x2800000400 bytes=512
-      69 | DMA_START      | T 0 | src=0x4000000000 dst=0x2000000000 bytes=1024
-      80 | DMA_COMPLETE   | T 0 | src=0x0 dst=0x0 bytes=0
-      69 | DMA_START      | T 1 | src=0x4000000000 dst=0x2200000000 bytes=1024
-      80 | DMA_COMPLETE   | T 1 | src=0x0 dst=0x0 bytes=0
-      69 | DMA_START      | T 2 | src=0x4000000000 dst=0x2400000000 bytes=1024
-      80 | DMA_COMPLETE   | T 2 | src=0x0 dst=0x0 bytes=0
-      69 | DMA_START      | T 3 | src=0x4000000000 dst=0x2600000000 bytes=1024
-      80 | DMA_COMPLETE   | T 3 | src=0x0 dst=0x0 bytes=0
-      69 | DMA_START      | T 5 | src=0x8000002000 dst=0x2a00000400 bytes=512
-      69 | DRAM_REQ_SENT  | T 5 | addr=0x8000002000 bytes=512 dram_lat=37
-      82 | DRAM_REQ_DONE  | T 5 | addr=0x8000002000 bytes=512 dram_lat=37
-      82 | DMA_COMPLETE   | T 5 | src=0x8000002000 dst=0x2a00000400 bytes=512
-      70 | DMA_START      | T 6 | src=0x8000002000 dst=0x2c00000400 bytes=512
-      70 | DRAM_REQ_SENT  | T 6 | addr=0x8000002000 bytes=512 dram_lat=37
-      83 | DRAM_REQ_DONE  | T 6 | addr=0x8000002000 bytes=512 dram_lat=37
-      83 | DMA_COMPLETE   | T 6 | src=0x8000002000 dst=0x2c00000400 bytes=512
-      71 | DMA_START      | T 7 | src=0x8000002000 dst=0x2e00000400 bytes=512
-      71 | DRAM_REQ_SENT  | T 7 | addr=0x8000002000 bytes=512 dram_lat=37
-      84 | DRAM_REQ_DONE  | T 7 | addr=0x8000002000 bytes=512 dram_lat=37
-      84 | DMA_COMPLETE   | T 7 | src=0x8000002000 dst=0x2e00000400 bytes=512
-      80 | DMA_START      | T 0 | src=0x8000002000 dst=0x2000000400 bytes=512
-      80 | DRAM_REQ_SENT  | T 0 | addr=0x8000002000 bytes=512 dram_lat=37
-      93 | DRAM_REQ_DONE  | T 0 | addr=0x8000002000 bytes=512 dram_lat=37
-      93 | DMA_COMPLETE   | T 0 | src=0x8000002000 dst=0x2000000400 bytes=512
-      80 | DMA_START      | T 1 | src=0x8000002000 dst=0x2200000400 bytes=512
-      80 | DRAM_REQ_SENT  | T 1 | addr=0x8000002000 bytes=512 dram_lat=37
-      93 | DRAM_REQ_DONE  | T 1 | addr=0x8000002000 bytes=512 dram_lat=37
-      93 | DMA_COMPLETE   | T 1 | src=0x8000002000 dst=0x2200000400 bytes=512
-      80 | DMA_START      | T 2 | src=0x8000002000 dst=0x2400000400 bytes=512
-      80 | DRAM_REQ_SENT  | T 2 | addr=0x8000002000 bytes=512 dram_lat=37
-      93 | DRAM_REQ_DONE  | T 2 | addr=0x8000002000 bytes=512 dram_lat=37
-      93 | DMA_COMPLETE   | T 2 | src=0x8000002000 dst=0x2400000400 bytes=512
-      80 | DMA_START      | T 3 | src=0x8000002000 dst=0x2600000400 bytes=512
-      80 | DRAM_REQ_SENT  | T 3 | addr=0x8000002000 bytes=512 dram_lat=37
-      93 | DRAM_REQ_DONE  | T 3 | addr=0x8000002000 bytes=512 dram_lat=37
-      93 | DMA_COMPLETE   | T 3 | src=0x8000002000 dst=0x2600000400 bytes=512
-      81 | MXU_LAUNCH     | T 4 | psum2_k1
-      85 | MXU_COMPLETE   | T 4 | psum2_k1
-      82 | MXU_LAUNCH     | T 5 | psum2_k1
-      86 | MXU_COMPLETE   | T 5 | psum2_k1
-      83 | MXU_LAUNCH     | T 6 | psum2_k1
-      87 | MXU_COMPLETE   | T 6 | psum2_k1
-      84 | MXU_LAUNCH     | T 7 | psum2_k1
-      88 | MXU_COMPLETE   | T 7 | psum2_k1
-      85 | DMA_START      | T 4 | src=0x2800000600 dst=0x2000000000 bytes=1024
-     107 | DMA_COMPLETE   | T 4 | src=0x0 dst=0x0 bytes=0
-      86 | DMA_START      | T 5 | src=0x2a00000600 dst=0x2200000000 bytes=1024
-     108 | DMA_COMPLETE   | T 5 | src=0x0 dst=0x0 bytes=0
-      87 | DMA_START      | T 6 | src=0x2c00000600 dst=0x2400000000 bytes=1024
-     109 | DMA_COMPLETE   | T 6 | src=0x0 dst=0x0 bytes=0
-      88 | DMA_START      | T 7 | src=0x2e00000600 dst=0x2600000000 bytes=1024
-     110 | DMA_COMPLETE   | T 7 | src=0x0 dst=0x0 bytes=0
-      93 | MXU_LAUNCH     | T 0 | psum2_k0
-      97 | MXU_COMPLETE   | T 0 | psum2_k0
-      93 | MXU_LAUNCH     | T 1 | psum2_k0
-      97 | MXU_COMPLETE   | T 1 | psum2_k0
-      93 | MXU_LAUNCH     | T 2 | psum2_k0
-      97 | MXU_COMPLETE   | T 2 | psum2_k0
-      93 | MXU_LAUNCH     | T 3 | psum2_k0
-      97 | MXU_COMPLETE   | T 3 | psum2_k0
-      97 | RELEASE        | T 0 | tag=2 cnt=1
-      97 | RELEASE        | T 1 | tag=2 cnt=1
-      97 | RELEASE        | T 2 | tag=2 cnt=1
-      97 | RELEASE        | T 3 | tag=2 cnt=1
-     107 | RELEASE        | T 4 | tag=2 cnt=2
-     108 | ACQUIRE_PASS   | T 0 | tag=2 arity=2 cnt=2
-     108 | TILE_DONE      | T 4
-     108 | RELEASE        | T 5 | tag=2 cnt=2
-     109 | DMA_START      | T 0 | src=0x0 dst=0x0 bytes=0
-     111 | DMA_COMPLETE   | T 0 | src=0x0 dst=0x0 bytes=0
-     109 | ACQUIRE_PASS   | T 1 | tag=2 arity=2 cnt=2
-     109 | TILE_DONE      | T 5
-     109 | RELEASE        | T 6 | tag=2 cnt=2
-     110 | DMA_START      | T 1 | src=0x0 dst=0x0 bytes=0
-     112 | DMA_COMPLETE   | T 1 | src=0x0 dst=0x0 bytes=0
-     110 | ACQUIRE_PASS   | T 2 | tag=2 arity=2 cnt=2
-     110 | TILE_DONE      | T 6
-     110 | RELEASE        | T 7 | tag=2 cnt=2
-     111 | DMA_START      | T 0 | src=0x0 dst=0x0 bytes=0
-     112 | DMA_COMPLETE   | T 0 | src=0x0 dst=0x0 bytes=0
-     111 | DMA_START      | T 2 | src=0x0 dst=0x0 bytes=0
-     113 | DMA_COMPLETE   | T 2 | src=0x0 dst=0x0 bytes=0
-     111 | ACQUIRE_PASS   | T 3 | tag=2 arity=2 cnt=2
-     111 | TILE_DONE      | T 7
-     112 | DMA_START      | T 0 | src=0x2000000800 dst=0x8000003000 bytes=512
-     112 | DRAM_REQ_SENT  | T 0 | addr=0x2000000800 bytes=512 dram_lat=37
-     125 | DRAM_REQ_DONE  | T 0 | addr=0x2000000800 bytes=512 dram_lat=37
-     125 | DMA_COMPLETE   | T 0 | src=0x2000000800 dst=0x8000003000 bytes=512
-     112 | DMA_START      | T 1 | src=0x0 dst=0x0 bytes=0
-     113 | DMA_COMPLETE   | T 1 | src=0x0 dst=0x0 bytes=0
-     112 | DMA_START      | T 3 | src=0x0 dst=0x0 bytes=0
-     114 | DMA_COMPLETE   | T 3 | src=0x0 dst=0x0 bytes=0
-     113 | DMA_START      | T 1 | src=0x2200000800 dst=0x8000003000 bytes=512
-     113 | DRAM_REQ_SENT  | T 1 | addr=0x2200000800 bytes=512 dram_lat=37
-     126 | DRAM_REQ_DONE  | T 1 | addr=0x2200000800 bytes=512 dram_lat=37
-     126 | DMA_COMPLETE   | T 1 | src=0x2200000800 dst=0x8000003000 bytes=512
-     113 | DMA_START      | T 2 | src=0x0 dst=0x0 bytes=0
-     114 | DMA_COMPLETE   | T 2 | src=0x0 dst=0x0 bytes=0
-     114 | DMA_START      | T 2 | src=0x2400000800 dst=0x8000003000 bytes=512
-     114 | DRAM_REQ_SENT  | T 2 | addr=0x2400000800 bytes=512 dram_lat=37
-     127 | DRAM_REQ_DONE  | T 2 | addr=0x2400000800 bytes=512 dram_lat=37
-     127 | DMA_COMPLETE   | T 2 | src=0x2400000800 dst=0x8000003000 bytes=512
-     114 | DMA_START      | T 3 | src=0x0 dst=0x0 bytes=0
-     115 | DMA_COMPLETE   | T 3 | src=0x0 dst=0x0 bytes=0
-     115 | DMA_START      | T 3 | src=0x2600000800 dst=0x8000003000 bytes=512
-     115 | DRAM_REQ_SENT  | T 3 | addr=0x2600000800 bytes=512 dram_lat=37
-     128 | DRAM_REQ_DONE  | T 3 | addr=0x2600000800 bytes=512 dram_lat=37
-     128 | DMA_COMPLETE   | T 3 | src=0x2600000800 dst=0x8000003000 bytes=512
-     125 | TILE_DONE      | T 0
-     126 | TILE_DONE      | T 1
-     127 | TILE_DONE      | T 2
-     128 | TILE_DONE      | T 3
+      49 | DMA_COMPLETE   | T 7 | src=0x0 dst=0x0 bytes=0
+      49 | RELEASE        | T 4 | tag=0 cnt=2
+      49 | RELEASE        | T 5 | tag=0 cnt=2
+      49 | RELEASE        | T 6 | tag=0 cnt=2
+      49 | RELEASE        | T 7 | tag=0 cnt=2
+      50 | ACQUIRE_PASS   | T 0 | tag=0 arity=2 cnt=2
+      50 | ACQUIRE_PASS   | T 1 | tag=0 arity=2 cnt=2
+      50 | ACQUIRE_PASS   | T 2 | tag=0 arity=2 cnt=2
+      50 | ACQUIRE_PASS   | T 3 | tag=0 arity=2 cnt=2
+      50 | DMA_START      | T 4 | src=0x4000000000 dst=0x2800000000 bytes=1024
+      61 | DMA_COMPLETE   | T 4 | src=0x0 dst=0x0 bytes=0
+      50 | DMA_START      | T 5 | src=0x4000000000 dst=0x2a00000000 bytes=1024
+      61 | DMA_COMPLETE   | T 5 | src=0x0 dst=0x0 bytes=0
+      50 | DMA_START      | T 6 | src=0x4000000000 dst=0x2c00000000 bytes=1024
+      61 | DMA_COMPLETE   | T 6 | src=0x0 dst=0x0 bytes=0
+      50 | DMA_START      | T 7 | src=0x4000000000 dst=0x2e00000000 bytes=1024
+      61 | DMA_COMPLETE   | T 7 | src=0x0 dst=0x0 bytes=0
+      51 | DMA_START      | T 0 | src=0x0 dst=0x0 bytes=0
+      53 | DMA_COMPLETE   | T 0 | src=0x0 dst=0x0 bytes=0
+      51 | DMA_START      | T 1 | src=0x0 dst=0x0 bytes=0
+      53 | DMA_COMPLETE   | T 1 | src=0x0 dst=0x0 bytes=0
+      51 | DMA_START      | T 2 | src=0x0 dst=0x0 bytes=0
+      53 | DMA_COMPLETE   | T 2 | src=0x0 dst=0x0 bytes=0
+      51 | DMA_START      | T 3 | src=0x0 dst=0x0 bytes=0
+      53 | DMA_COMPLETE   | T 3 | src=0x0 dst=0x0 bytes=0
+      53 | DMA_START      | T 0 | src=0x2000000400 dst=0x4000000000 bytes=1024
+      64 | DMA_COMPLETE   | T 0 | src=0x0 dst=0x0 bytes=0
+      53 | DMA_START      | T 1 | src=0x2200000400 dst=0x4000000000 bytes=1024
+      64 | DMA_COMPLETE   | T 1 | src=0x0 dst=0x0 bytes=0
+      53 | DMA_START      | T 2 | src=0x2400000400 dst=0x4000000000 bytes=1024
+      64 | DMA_COMPLETE   | T 2 | src=0x0 dst=0x0 bytes=0
+      53 | DMA_START      | T 3 | src=0x2600000400 dst=0x4000000000 bytes=1024
+      64 | DMA_COMPLETE   | T 3 | src=0x0 dst=0x0 bytes=0
+      61 | DMA_START      | T 4 | src=0x8000002000 dst=0x2800000400 bytes=512
+      61 | DRAM_REQ_SENT  | T 4 | addr=0x8000002000 bytes=512 dram_lat=37
+      74 | DRAM_REQ_DONE  | T 4 | addr=0x8000002000 bytes=512 dram_lat=37
+      74 | DMA_COMPLETE   | T 4 | src=0x8000002000 dst=0x2800000400 bytes=512
+      61 | DMA_START      | T 5 | src=0x8000002000 dst=0x2a00000400 bytes=512
+      61 | DRAM_REQ_SENT  | T 5 | addr=0x8000002000 bytes=512 dram_lat=37
+      74 | DRAM_REQ_DONE  | T 5 | addr=0x8000002000 bytes=512 dram_lat=37
+      74 | DMA_COMPLETE   | T 5 | src=0x8000002000 dst=0x2a00000400 bytes=512
+      61 | DMA_START      | T 6 | src=0x8000002000 dst=0x2c00000400 bytes=512
+      61 | DRAM_REQ_SENT  | T 6 | addr=0x8000002000 bytes=512 dram_lat=37
+      74 | DRAM_REQ_DONE  | T 6 | addr=0x8000002000 bytes=512 dram_lat=37
+      74 | DMA_COMPLETE   | T 6 | src=0x8000002000 dst=0x2c00000400 bytes=512
+      61 | DMA_START      | T 7 | src=0x8000002000 dst=0x2e00000400 bytes=512
+      61 | DRAM_REQ_SENT  | T 7 | addr=0x8000002000 bytes=512 dram_lat=37
+      74 | DRAM_REQ_DONE  | T 7 | addr=0x8000002000 bytes=512 dram_lat=37
+      74 | DMA_COMPLETE   | T 7 | src=0x8000002000 dst=0x2e00000400 bytes=512
+      64 | RELEASE        | T 0 | tag=1 cnt=1
+      64 | RELEASE        | T 1 | tag=1 cnt=1
+      64 | RELEASE        | T 2 | tag=1 cnt=1
+      64 | RELEASE        | T 3 | tag=1 cnt=1
+      65 | ACQUIRE_PASS   | T 0 | tag=1 arity=1 cnt=1
+      65 | ACQUIRE_PASS   | T 1 | tag=1 arity=1 cnt=1
+      65 | ACQUIRE_PASS   | T 2 | tag=1 arity=1 cnt=1
+      65 | ACQUIRE_PASS   | T 3 | tag=1 arity=1 cnt=1
+      66 | DMA_START      | T 0 | src=0x4000000000 dst=0x2000000000 bytes=1024
+      77 | DMA_COMPLETE   | T 0 | src=0x0 dst=0x0 bytes=0
+      66 | DMA_START      | T 1 | src=0x4000000000 dst=0x2200000000 bytes=1024
+      77 | DMA_COMPLETE   | T 1 | src=0x0 dst=0x0 bytes=0
+      66 | DMA_START      | T 2 | src=0x4000000000 dst=0x2400000000 bytes=1024
+      77 | DMA_COMPLETE   | T 2 | src=0x0 dst=0x0 bytes=0
+      66 | DMA_START      | T 3 | src=0x4000000000 dst=0x2600000000 bytes=1024
+      77 | DMA_COMPLETE   | T 3 | src=0x0 dst=0x0 bytes=0
+      74 | MXU_LAUNCH     | T 4 | psum2_k1
+      78 | MXU_COMPLETE   | T 4 | psum2_k1
+      74 | MXU_LAUNCH     | T 5 | psum2_k1
+      78 | MXU_COMPLETE   | T 5 | psum2_k1
+      74 | MXU_LAUNCH     | T 6 | psum2_k1
+      78 | MXU_COMPLETE   | T 6 | psum2_k1
+      74 | MXU_LAUNCH     | T 7 | psum2_k1
+      78 | MXU_COMPLETE   | T 7 | psum2_k1
+      77 | DMA_START      | T 0 | src=0x8000002000 dst=0x2000000400 bytes=512
+      77 | DRAM_REQ_SENT  | T 0 | addr=0x8000002000 bytes=512 dram_lat=37
+      90 | DRAM_REQ_DONE  | T 0 | addr=0x8000002000 bytes=512 dram_lat=37
+      90 | DMA_COMPLETE   | T 0 | src=0x8000002000 dst=0x2000000400 bytes=512
+      77 | DMA_START      | T 1 | src=0x8000002000 dst=0x2200000400 bytes=512
+      77 | DRAM_REQ_SENT  | T 1 | addr=0x8000002000 bytes=512 dram_lat=37
+      90 | DRAM_REQ_DONE  | T 1 | addr=0x8000002000 bytes=512 dram_lat=37
+      90 | DMA_COMPLETE   | T 1 | src=0x8000002000 dst=0x2200000400 bytes=512
+      77 | DMA_START      | T 2 | src=0x8000002000 dst=0x2400000400 bytes=512
+      77 | DRAM_REQ_SENT  | T 2 | addr=0x8000002000 bytes=512 dram_lat=37
+      90 | DRAM_REQ_DONE  | T 2 | addr=0x8000002000 bytes=512 dram_lat=37
+      90 | DMA_COMPLETE   | T 2 | src=0x8000002000 dst=0x2400000400 bytes=512
+      77 | DMA_START      | T 3 | src=0x8000002000 dst=0x2600000400 bytes=512
+      77 | DRAM_REQ_SENT  | T 3 | addr=0x8000002000 bytes=512 dram_lat=37
+      90 | DRAM_REQ_DONE  | T 3 | addr=0x8000002000 bytes=512 dram_lat=37
+      90 | DMA_COMPLETE   | T 3 | src=0x8000002000 dst=0x2600000400 bytes=512
+      78 | DMA_START      | T 4 | src=0x2800000600 dst=0x2000000000 bytes=1024
+      97 | DMA_COMPLETE   | T 4 | src=0x0 dst=0x0 bytes=0
+      78 | DMA_START      | T 5 | src=0x2a00000600 dst=0x2200000000 bytes=1024
+      97 | DMA_COMPLETE   | T 5 | src=0x0 dst=0x0 bytes=0
+      78 | DMA_START      | T 6 | src=0x2c00000600 dst=0x2400000000 bytes=1024
+      97 | DMA_COMPLETE   | T 6 | src=0x0 dst=0x0 bytes=0
+      78 | DMA_START      | T 7 | src=0x2e00000600 dst=0x2600000000 bytes=1024
+      97 | DMA_COMPLETE   | T 7 | src=0x0 dst=0x0 bytes=0
+      90 | MXU_LAUNCH     | T 0 | psum2_k0
+      94 | MXU_COMPLETE   | T 0 | psum2_k0
+      90 | MXU_LAUNCH     | T 1 | psum2_k0
+      94 | MXU_COMPLETE   | T 1 | psum2_k0
+      90 | MXU_LAUNCH     | T 2 | psum2_k0
+      94 | MXU_COMPLETE   | T 2 | psum2_k0
+      90 | MXU_LAUNCH     | T 3 | psum2_k0
+      94 | MXU_COMPLETE   | T 3 | psum2_k0
+      94 | RELEASE        | T 0 | tag=2 cnt=1
+      94 | RELEASE        | T 1 | tag=2 cnt=1
+      94 | RELEASE        | T 2 | tag=2 cnt=1
+      94 | RELEASE        | T 3 | tag=2 cnt=1
+      97 | RELEASE        | T 4 | tag=2 cnt=2
+      97 | RELEASE        | T 5 | tag=2 cnt=2
+      97 | RELEASE        | T 6 | tag=2 cnt=2
+      97 | RELEASE        | T 7 | tag=2 cnt=2
+      98 | ACQUIRE_PASS   | T 0 | tag=2 arity=2 cnt=2
+      98 | ACQUIRE_PASS   | T 1 | tag=2 arity=2 cnt=2
+      98 | ACQUIRE_PASS   | T 2 | tag=2 arity=2 cnt=2
+      98 | ACQUIRE_PASS   | T 3 | tag=2 arity=2 cnt=2
+      98 | TILE_DONE      | T 4
+      98 | TILE_DONE      | T 5
+      98 | TILE_DONE      | T 6
+      98 | TILE_DONE      | T 7
+      99 | DMA_START      | T 0 | src=0x0 dst=0x0 bytes=0
+     101 | DMA_COMPLETE   | T 0 | src=0x0 dst=0x0 bytes=0
+      99 | DMA_START      | T 1 | src=0x0 dst=0x0 bytes=0
+     101 | DMA_COMPLETE   | T 1 | src=0x0 dst=0x0 bytes=0
+      99 | DMA_START      | T 2 | src=0x0 dst=0x0 bytes=0
+     101 | DMA_COMPLETE   | T 2 | src=0x0 dst=0x0 bytes=0
+      99 | DMA_START      | T 3 | src=0x0 dst=0x0 bytes=0
+     101 | DMA_COMPLETE   | T 3 | src=0x0 dst=0x0 bytes=0
+     101 | DMA_START      | T 0 | src=0x0 dst=0x0 bytes=0
+     102 | DMA_COMPLETE   | T 0 | src=0x0 dst=0x0 bytes=0
+     101 | DMA_START      | T 1 | src=0x0 dst=0x0 bytes=0
+     102 | DMA_COMPLETE   | T 1 | src=0x0 dst=0x0 bytes=0
+     101 | DMA_START      | T 2 | src=0x0 dst=0x0 bytes=0
+     102 | DMA_COMPLETE   | T 2 | src=0x0 dst=0x0 bytes=0
+     101 | DMA_START      | T 3 | src=0x0 dst=0x0 bytes=0
+     102 | DMA_COMPLETE   | T 3 | src=0x0 dst=0x0 bytes=0
+     102 | DMA_START      | T 0 | src=0x2000000800 dst=0x8000003000 bytes=512
+     102 | DRAM_REQ_SENT  | T 0 | addr=0x2000000800 bytes=512 dram_lat=37
+     115 | DRAM_REQ_DONE  | T 0 | addr=0x2000000800 bytes=512 dram_lat=37
+     115 | DMA_COMPLETE   | T 0 | src=0x2000000800 dst=0x8000003000 bytes=512
+     102 | DMA_START      | T 1 | src=0x2200000800 dst=0x8000003000 bytes=512
+     102 | DRAM_REQ_SENT  | T 1 | addr=0x2200000800 bytes=512 dram_lat=37
+     115 | DRAM_REQ_DONE  | T 1 | addr=0x2200000800 bytes=512 dram_lat=37
+     115 | DMA_COMPLETE   | T 1 | src=0x2200000800 dst=0x8000003000 bytes=512
+     102 | DMA_START      | T 2 | src=0x2400000800 dst=0x8000003000 bytes=512
+     102 | DRAM_REQ_SENT  | T 2 | addr=0x2400000800 bytes=512 dram_lat=37
+     115 | DRAM_REQ_DONE  | T 2 | addr=0x2400000800 bytes=512 dram_lat=37
+     115 | DMA_COMPLETE   | T 2 | src=0x2400000800 dst=0x8000003000 bytes=512
+     102 | DMA_START      | T 3 | src=0x2600000800 dst=0x8000003000 bytes=512
+     102 | DRAM_REQ_SENT  | T 3 | addr=0x2600000800 bytes=512 dram_lat=37
+     115 | DRAM_REQ_DONE  | T 3 | addr=0x2600000800 bytes=512 dram_lat=37
+     115 | DMA_COMPLETE   | T 3 | src=0x2600000800 dst=0x8000003000 bytes=512
+     115 | TILE_DONE      | T 0
+     115 | TILE_DONE      | T 1
+     115 | TILE_DONE      | T 2
+     115 | TILE_DONE      | T 3

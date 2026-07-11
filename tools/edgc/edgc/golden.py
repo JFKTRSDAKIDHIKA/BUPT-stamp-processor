@@ -33,14 +33,16 @@ class Mem:
         self.dram = bytearray(dram_bytes)
 
     def _resolve(self, addr):
+        # Parameterized layout mirroring src/common/address.h: selector
+        # fields anchored at bit 36, stride constants from edgc.isa.
         seg = (addr >> 37) & 0x7
         if seg == 0b001:
-            tile = (addr >> 33) & 0xF
-            off = addr & ((1 << 18) - 1)
+            tile = (addr - LOCAL_BASE) // LOCAL_STRIDE
+            off = addr & (LOCAL_SIZE - 1)
             return self.local[tile], off
         if seg == 0b010:
-            bank = (addr >> 35) & 0x3
-            off = addr & ((1 << 23) - 1)
+            bank = (addr - SHARED_BASE) // SHARED_STRIDE
+            off = addr & (SHARED_SIZE - 1)
             return self.shared[bank], off
         if seg == 0b100:
             off = addr & ((1 << 34) - 1)

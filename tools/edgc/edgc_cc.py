@@ -97,6 +97,11 @@ def main():
     ap.add_argument("--check", action="store_true")
     ap.add_argument("--dse", action="store_true")
     ap.add_argument("--json", action="store_true")
+    ap.add_argument("--W", type=int, default=0,
+                    help="consumption-port width knob override (tile_link=W, "
+                         "wr_ports=W, rd_ports=2W, dma_rate=W)")
+    ap.add_argument("--dram-density", type=int, default=0,
+                    help="vertical bond density override (bits/column/cycle)")
     args = ap.parse_args()
 
     # Single source of truth: schedules and the default ramulator come from
@@ -113,6 +118,13 @@ def main():
 
     scheds = all_scheds if args.dse else [
         next((s for s in all_scheds if s.label == default_sched), all_scheds[0])]
+    if args.W or args.dram_density:
+        base_s = scheds[0]
+        W = args.W or base_s.tile_link
+        scheds = [Sched(label=f"W{W}", tile_link=W, wr_ports=W, rd_ports=2 * W,
+                        dma_rate=W,
+                        dram_density=args.dram_density or base_s.dram_density,
+                        nmc=base_s.nmc)]
 
     results = []
     for sched in scheds:

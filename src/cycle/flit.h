@@ -85,12 +85,40 @@ struct Flit {
     // rather than a tile).
     bool to_bank = false;
 
-    // Ring routing state.
-    TileId ring_dest = 0;      ///< tile where this flit leaves the ring
-    int dir = 0;               ///< 0 = clockwise (+1), 1 = counter-clockwise
+    // NoC routing state.
+    TileId ring_dest = 0;      ///< tile where this flit leaves the NoC
+    int dir = 0;               ///< ring: 0 = cw, 1 = ccw; grid: travel direction
     Cycle moved_at = -1;       ///< last cycle the flit advanced (2-phase guard)
     Cycle ready_at = 0;        ///< earliest cycle a queue pop may see it
 };
+
+// ─── Topology geometry ───────────────────────────────────────
+// Ring uses 2 directions (cw/ccw); mesh/torus use 4 (E/W/S/N) on a
+// NOC_GRID_W x NOC_GRID_H grid with node id = y * W + x and XY
+// dimension-order routing (X resolved first, then Y).
+constexpr int NOC_DIRS = (TOPOLOGY == TOPO_RING) ? 2 : 4;
+constexpr int DIR_E = 0, DIR_W = 1, DIR_S = 2, DIR_N = 3;
+
+/// Directed NoC links that physically exist (for link-utilization stats):
+/// ring 2N; torus 4N; mesh loses the wrap links on each border.
+constexpr int NOC_DIRECTED_LINKS =
+    TOPOLOGY == TOPO_RING  ? 2 * NUM_TILES :
+    TOPOLOGY == TOPO_TORUS ? 4 * NUM_TILES :
+    2 * ((NOC_GRID_W - 1) * NOC_GRID_H + NOC_GRID_W * (NOC_GRID_H - 1));
+
+inline int grid_x(TileId t) { return t % NOC_GRID_W; }
+inline int grid_y(TileId t) { return t / NOC_GRID_W; }
+
+/// Signed displacement from `from` to `to` along a dimension of size s.
+/// Torus wraps to the shorter side (tie -> positive direction).
+inline int grid_delta(int from, int to, int s) {
+    int d = to - from;
+    if (TOPOLOGY == TOPO_TORUS) {
+        if (2 * d > s) d -= s;
+        else if (2 * d < -s) d += s;
+    }
+    return d;
+}
 
 /// Bounded FIFO of flits with a latency stamp on entry.
 class FlitQueue {
@@ -104,7 +132,7 @@ public:
     /// Push with an earliest-visible cycle (now + link latency).
     bool push(Flit f, Cycle ready_at) {
         if (full()) return false;
-        if (f.bytes > 64 || f.dir < 0 || f.dir > 1)
+        if (f.bytes > 64 || f.dir < 0 || f.dir >= NOC_DIRS)
             throw std::logic_error("FlitQueue::push: malformed flit");
         f.ready_at = ready_at;
         q_.push_back(std::move(f));
@@ -145,15 +173,50 @@ inline int ring_direction(TileId from, TileId to) {
     return (cw <= NUM_TILES - cw) ? 0 : 1;
 }
 
-/// Gateway tile: the tile of group `g` nearest to `from` on the ring
-/// (tie -> lower tile id). Far SHARED-bank traffic rides the ring to the
+/// Topology-aware shortest-path hop count between two tiles.
+inline int noc_hops_topo(TileId from, TileId to) {
+    if (TOPOLOGY == TOPO_RING) return ring_hops(from, to);
+    int dx = grid_delta(grid_x(from), grid_x(to), NOC_GRID_W);
+    int dy = grid_delta(grid_y(from), grid_y(to), NOC_GRID_H);
+    return (dx < 0 ? -dx : dx) + (dy < 0 ? -dy : dy);
+}
+
+/// Neighbour of `t` in grid direction `dir` (wraps; mesh routing never
+/// asks for a neighbour across a border).
+inline TileId grid_neighbor(TileId t, int dir) {
+    int x = grid_x(t), y = grid_y(t);
+    switch (dir) {
+        case DIR_E: x = (x + 1) % NOC_GRID_W; break;
+        case DIR_W: x = (x + NOC_GRID_W - 1) % NOC_GRID_W; break;
+        case DIR_S: y = (y + 1) % NOC_GRID_H; break;
+        default:    y = (y + NOC_GRID_H - 1) % NOC_GRID_H; break;
+    }
+    return static_cast<TileId>(y * NOC_GRID_W + x);
+}
+
+/// XY dimension-order next-hop direction (X first, then Y). cur != dest.
+inline int grid_next_dir(TileId cur, TileId dest) {
+    int dx = grid_delta(grid_x(cur), grid_x(dest), NOC_GRID_W);
+    if (dx != 0) return dx > 0 ? DIR_E : DIR_W;
+    int dy = grid_delta(grid_y(cur), grid_y(dest), NOC_GRID_H);
+    return dy > 0 ? DIR_S : DIR_N;
+}
+
+/// First-hop direction for a flit injected at `from` toward `to`.
+inline int noc_first_dir(TileId from, TileId to) {
+    return TOPOLOGY == TOPO_RING ? ring_direction(from, to)
+                                 : grid_next_dir(from, to);
+}
+
+/// Gateway tile: the tile of group `g` nearest to `from` on the NoC
+/// (tie -> lower tile id). Far SHARED-bank traffic rides the NoC to the
 /// gateway, then takes that tile's vertical hybrid bond up to the bank.
 inline TileId gateway_tile(TileId from, GroupId g) {
     TileId best = static_cast<TileId>(g * TILES_PER_GROUP);
-    int best_d = ring_hops(from, best);
+    int best_d = noc_hops_topo(from, best);
     for (int i = 1; i < TILES_PER_GROUP; i++) {
         TileId cand = static_cast<TileId>(g * TILES_PER_GROUP + i);
-        int d = ring_hops(from, cand);
+        int d = noc_hops_topo(from, cand);
         if (d < best_d) { best = cand; best_d = d; }
     }
     return best;

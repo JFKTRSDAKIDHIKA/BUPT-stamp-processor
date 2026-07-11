@@ -22,18 +22,19 @@
 
 #include <array>
 #include <cstdint>
+#include <type_traits>
 
 namespace mobol::cycle {
 
 /// All fabric queues + link statistics. Owned by Chip, operated on by
 /// RingNoC / BankCtrl / DramCtrl / TileCore.
 struct Fabric {
-    // Ring: input buffer at node n holding flits sent by its neighbour in
-    // direction d (0 = clockwise/increasing index, 1 = counter-clockwise),
+    // NoC input buffer at node n holding flits travelling in direction d
+    // (ring: 0 = clockwise, 1 = counter-clockwise; mesh/torus: E/W/S/N),
     // separated per virtual channel (VC0 requests / VC1 responses).
-    FlitQueue ring_in[NUM_TILES][2][NUM_VCS];
-    // Per-tile injection queues, one per ring direction per VC.
-    FlitQueue inject[NUM_TILES][2][NUM_VCS];
+    FlitQueue ring_in[NUM_TILES][NOC_DIRS][NUM_VCS];
+    // Per-tile injection queues, one per first-hop direction per VC.
+    FlitQueue inject[NUM_TILES][NOC_DIRS][NUM_VCS];
     // Flits that have arrived at their destination tile (ring eject or
     // vertical down) and await ingress processing (SRAM commit etc.),
     // per VC so blocked writes cannot head-of-line block responses.
@@ -45,7 +46,7 @@ struct Fabric {
     FlitQueue vdown_dram_bank[NUM_BANKS];  ///< DRAM ctrl -> bank column
 
     // ── Statistics ──
-    uint64_t ring_link_flits[NUM_TILES][2] = {};  ///< flits leaving node n, dir d
+    uint64_t ring_link_flits[NUM_TILES][NOC_DIRS] = {};  ///< flits leaving node n, dir d
     uint64_t ring_inject_flits = 0;
     uint64_t vbond_tile_bank_flits = 0;
     uint64_t vbond_bank_dram_flits = 0;
@@ -84,8 +85,39 @@ private:
     /// Try to inject from inject[n][d][vc]. Returns true if link used.
     bool try_inject(Fabric& fab, TileId n, int d, int vc, Cycle now);
 
+public:
+    /// Sink a flit that terminates at node n (tile ingress or gateway
+    /// vertical up-link). Topology-independent; shared with GridNoC.
     static bool eject(Fabric& fab, TileId n, Flit&& f, Cycle now);
 };
+
+/// Cycle-accurate 2D mesh/torus router logic (XY dimension-order routing,
+/// one flit per directed link per cycle, per-cycle link arbitration:
+/// responses (VC1) beat requests, through traffic beats injection).
+class GridNoC {
+public:
+    explicit GridNoC(const CycleConfig& cfg) : cfg_(cfg) {}
+
+    void tick(Fabric& fab, Cycle now);
+
+    uint64_t total_flit_hops() const { return flit_hops_; }
+    uint64_t eject_blocked_cycles() const { return eject_blocked_; }
+
+private:
+    const CycleConfig& cfg_;
+    uint64_t flit_hops_ = 0;
+    uint64_t eject_blocked_ = 0;
+
+    /// Forward the head of ring_in[n][d][vc] one hop (or eject). Returns
+    /// true if it used an output link (marks it in `used`).
+    bool forward_head(Fabric& fab, TileId n, int d, int vc, Cycle now,
+                      bool used[][NOC_DIRS]);
+    bool inject_head(Fabric& fab, TileId n, int d, int vc, Cycle now,
+                     bool used[][NOC_DIRS]);
+};
+
+/// Topology selected at compile time (MOBOL_TOPOLOGY).
+using NocImpl = std::conditional_t<TOPOLOGY == TOPO_RING, RingNoC, GridNoC>;
 
 /// Shared-scratchpad bank controller on the buffer die (one per bank).
 /// Serves SHARED reads/writes arriving on the four tile up-links of its

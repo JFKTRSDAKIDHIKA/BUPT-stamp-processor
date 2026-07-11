@@ -14,7 +14,7 @@ namespace mobol::cycle {
 
 Fabric::Fabric(const CycleConfig& cfg) {
     for (int t = 0; t < NUM_TILES; t++) {
-        for (int d = 0; d < 2; d++)
+        for (int d = 0; d < NOC_DIRS; d++)
             for (int v = 0; v < NUM_VCS; v++) {
                 ring_in[t][d][v].set_capacity(cfg.noc_buffer_depth);
                 inject[t][d][v].set_capacity(cfg.noc_inject_queue_depth);
@@ -76,7 +76,7 @@ bool Fabric::route_from_tile(TileId t, Flit&& f, Cycle now) {
         vbond_tile_bank_flits++;
         return true;
     }
-    int d = ring_direction(t, dest);
+    int d = noc_first_dir(t, dest);
     int vc = flit_vc(f.kind);
     if (inject[t][d][vc].full()) return false;
     f.ring_dest = dest;
@@ -181,6 +181,89 @@ void RingNoC::tick(Fabric& fab, Cycle now) {
         }
     }
 }
+
+// ═══ GridNoC (mesh / torus, XY dimension-order routing) ═══════
+// Only compiled for grid topologies: in a ring build NOC_DIRS is 2 and
+// the 4-direction indexing would be statically out of bounds.
+#if MOBOL_TOPOLOGY != 0
+//
+// Per cycle each directed link (n -> neighbor(n, d)) carries at most one
+// flit, tracked in `used[n][d]`. Arbitration mirrors the ring's rules:
+// ejection uses per-VC eject ports (no link), responses (VC1) win links
+// over requests (VC0), and through traffic beats fresh injection. XY
+// routing is deadlock-free on the mesh; on the torus the wrap links can
+// in principle form buffer cycles — the simulator's deadlock window
+// aborts such a run loudly (the variant is then INVALID) rather than
+// producing wrong cycle counts.
+
+bool GridNoC::forward_head(Fabric& fab, TileId n, int d, int vc, Cycle now,
+                           bool used[][NOC_DIRS]) {
+    Flit* head = fab.ring_in[n][d][vc].front_ready(now);
+    if (!head || head->moved_at >= now || head->ring_dest == n) return false;
+    int out = grid_next_dir(n, head->ring_dest);
+    if (used[n][out]) return false;
+    TileId next = grid_neighbor(n, out);
+    if (fab.ring_in[next][out][vc].full()) return false;   // backpressure
+    Flit f = *head;
+    fab.ring_in[n][d][vc].pop();
+    f.moved_at = now;
+    f.dir = out;
+    fab.ring_in[next][out][vc].push(std::move(f), now + cfg_.noc_hop_latency);
+    fab.ring_link_flits[n][out]++;
+    flit_hops_++;
+    used[n][out] = true;
+    return true;
+}
+
+bool GridNoC::inject_head(Fabric& fab, TileId n, int d, int vc, Cycle now,
+                          bool used[][NOC_DIRS]) {
+    Flit* inj = fab.inject[n][d][vc].front_ready(now);
+    if (!inj || inj->moved_at >= now) return false;
+    if (used[n][d]) return false;
+    TileId next = grid_neighbor(n, d);
+    if (fab.ring_in[next][d][vc].full()) return false;
+    Flit f = *inj;
+    fab.inject[n][d][vc].pop();
+    f.moved_at = now;
+    fab.ring_in[next][d][vc].push(std::move(f), now + cfg_.noc_hop_latency);
+    fab.ring_link_flits[n][d]++;
+    flit_hops_++;
+    used[n][d] = true;
+    return true;
+}
+
+void GridNoC::tick(Fabric& fab, Cycle now) {
+    bool used[NUM_TILES][NOC_DIRS] = {};
+
+    // Ejection phase (per-VC eject ports, no link usage).
+    for (int n = 0; n < NUM_TILES; n++) {
+        TileId t = static_cast<TileId>(n);
+        for (int d = 0; d < NOC_DIRS; d++) {
+            for (int vc : {VC_RESP, VC_REQ}) {
+                Flit* head = fab.ring_in[t][d][vc].front_ready(now);
+                if (!head || head->moved_at >= now || head->ring_dest != t)
+                    continue;
+                Flit f = *head;
+                f.moved_at = now;
+                if (RingNoC::eject(fab, t, std::move(f), now))
+                    fab.ring_in[t][d][vc].pop();
+                else
+                    eject_blocked_++;
+            }
+        }
+    }
+
+    // Link phase: responses first, through traffic before injection.
+    for (int vc : {VC_RESP, VC_REQ}) {
+        for (int n = 0; n < NUM_TILES; n++)
+            for (int d = 0; d < NOC_DIRS; d++)
+                forward_head(fab, static_cast<TileId>(n), d, vc, now, used);
+        for (int n = 0; n < NUM_TILES; n++)
+            for (int d = 0; d < NOC_DIRS; d++)
+                inject_head(fab, static_cast<TileId>(n), d, vc, now, used);
+    }
+}
+#endif  // MOBOL_TOPOLOGY != 0
 
 // ═══ BankCtrl ════════════════════════════════════════════════
 

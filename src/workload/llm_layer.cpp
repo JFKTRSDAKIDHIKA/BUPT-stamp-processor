@@ -183,6 +183,10 @@ Program build_llm_program(const LlmParams& p) {
 
     if (p.stream_weights && p.arch == LlmArch::NO_BUFFER)
         throw std::runtime_error("weight streaming requires the buffer die");
+    if (NUM_TILES < 16 || NUM_BANKS < 4)
+        throw std::runtime_error(
+            "llm workload encodes a fixed 16-tile / 4-bank dataflow; "
+            "use the edgc trace workloads for structural variants");
 
     Program prog;
     auto emit = [&](int t, Instr i) { prog.add(static_cast<TileId>(t), std::move(i)); };

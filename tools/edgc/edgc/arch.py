@@ -21,10 +21,21 @@ except Exception as e:  # pragma: no cover
 
 
 def _default_arch_path() -> str:
+    # Env override first (DSE variants each carry their own YAML), then
     # tools/edgc/edgc/arch.py -> repo_root/config/mobol_arch.yaml
+    env = os.environ.get("MOBOL_ARCH_YAML", "")
+    if env:
+        return env
     here = os.path.dirname(os.path.abspath(__file__))
     root = os.path.abspath(os.path.join(here, "..", "..", ".."))
     return os.path.join(root, "config", "mobol_arch.yaml")
+
+
+def clog2(v: int) -> int:
+    b = 0
+    while (1 << b) < v:
+        b += 1
+    return b
 
 
 @dataclass
@@ -38,7 +49,22 @@ class ArchParams:
     mxu_k: int = 16
     # local scratchpad size (bytes) — for the compiler's LOCAL memory map
     local_bytes: int = 1 << 18
-    shared_bytes: int = 1 << 23
+    shared_mb: int = 8
+    topology: str = "ring"
+
+    # Address layout (mirrors src/common/address.h): selector fields are
+    # anchored at bit 36; widths never shrink below the historical 4/2 bits.
+    @property
+    def shared_bytes(self) -> int:
+        return self.shared_mb << 20
+
+    @property
+    def tile_sel_lo(self) -> int:
+        return 37 - max(4, clog2(self.num_tiles))
+
+    @property
+    def bank_sel_lo(self) -> int:
+        return 37 - max(2, clog2(self.num_banks))
     # dram device model + default ramulator path (relative to repo root)
     ramulator_config: str = "config/ramulator_3d_dram.yaml"
     # schedule defaults + DSE list (each is a dict of trace .config knobs)
@@ -61,6 +87,11 @@ def load_arch(path: str = "") -> ArchParams:
     a.mxu_m = s.get("mxu_m", a.mxu_m)
     a.mxu_n = s.get("mxu_n", a.mxu_n)
     a.mxu_k = s.get("mxu_k", a.mxu_k)
+    a.shared_mb = s.get("shared_mb", a.shared_mb)
+    a.topology = s.get("topology", a.topology)
+    assert a.num_tiles % a.tiles_per_group == 0 \
+        and a.num_banks == a.num_tiles // a.tiles_per_group, \
+        f"structural: num_banks must equal num_tiles/tiles_per_group"
     dram = y.get("dram", {})
     a.ramulator_config = dram.get("ramulator_config", a.ramulator_config)
     comp = y.get("compiler", {})

@@ -23,7 +23,7 @@ Chip::Chip(const CycleConfig& cfg)
 
 bool Chip::fabric_empty() const {
     for (int t = 0; t < NUM_TILES; t++) {
-        for (int d = 0; d < 2; d++)
+        for (int d = 0; d < NOC_DIRS; d++)
             for (int v = 0; v < NUM_VCS; v++)
                 if (!fab_.ring_in[t][d][v].empty() || !fab_.inject[t][d][v].empty())
                     return false;
@@ -95,12 +95,12 @@ ChipSummary Chip::run(const Program& prog) {
 
     uint64_t total_link_flits = 0, max_link = 0;
     for (int t = 0; t < NUM_TILES; t++)
-        for (int d = 0; d < 2; d++) {
+        for (int d = 0; d < NOC_DIRS; d++) {
             total_link_flits += fab_.ring_link_flits[t][d];
             max_link = std::max(max_link, fab_.ring_link_flits[t][d]);
         }
     s.avg_noc_link_utilization = now > 0
-        ? static_cast<double>(total_link_flits) / (static_cast<double>(now) * NUM_TILES * 2) : 0.0;
+        ? static_cast<double>(total_link_flits) / (static_cast<double>(now) * NOC_DIRECTED_LINKS) : 0.0;
     s.max_noc_link_utilization = now > 0
         ? static_cast<double>(max_link) / static_cast<double>(now) : 0.0;
     s.noc_flit_hops = noc_.total_flit_hops();

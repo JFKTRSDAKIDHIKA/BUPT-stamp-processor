@@ -48,6 +48,9 @@ Instr store_block(TileId t, uint32_t local_off, Addr base, int r, int c,
 
 Program build_dual_gemm_program(bool use_shared) {
     using L = DGLayout;
+    if (NUM_TILES < 8)
+        throw std::runtime_error(
+            "dual_gemm workload encodes a fixed 8-tile dataflow");
     Program prog;
 
     // ═══ Tiles 0-3: k=0 compute + reduce (both GEMMs) ═══

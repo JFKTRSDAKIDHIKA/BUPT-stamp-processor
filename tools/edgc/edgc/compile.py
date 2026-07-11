@@ -270,6 +270,16 @@ class Compiler:
         tp.dma(self._dram_blk(base, ld, r, c, esz), isa.local(tp.tid, off),
                BN, BN * esz, ld * esz, BN * esz)
 
+    def _load_block_shared(self, tp, base, ld, r, c, off, esz=F16):
+        """Pull a 16x16 block of a SHARED-resident operand from this tile's
+        NEAR bank (steady-state residency: e.g. the decode KV cache lives in
+        the buffer die, so reads ride the vertical bond instead of DRAM).
+        Timing-only path: the bank SRAM is zero-initialized, which is fine
+        for shape-driven Tier-1 runs."""
+        bank = isa.tile_group(tp.tid)
+        src = isa.shared(bank, base + (r * BN * ld + c * BN) * esz)
+        tp.dma(src, isa.local(tp.tid, off), BN, BN * esz, ld * esz, BN * esz)
+
     def _store_block(self, tp, off, base, ld, r, c, esz=F16):
         tp.dma(isa.local(tp.tid, off), self._dram_blk(base, ld, r, c, esz),
                BN, BN * esz, BN * esz, ld * esz)
@@ -284,25 +294,37 @@ class Compiler:
         "i4":  dict(eb=0.5, kpo=4, op="MXU_I4I4"),
     }
 
-    def _gemm(self, a_base, b_base, c_base, M, K, N_, name, prec="f16"):
+    def _gemm(self, a_base, b_base, c_base, M, K, N_, name, prec="f16",
+              b_shared=False):
         """C(MxN) = A(MxK)*B(KxN). Output block (m,n) accumulated over the K
         axis on one tile. `prec` selects the MMA precision (timing model):
         f16 processes one 16-K-block per MXU issue, i8 two, i4 four, with
-        DRAM operands sized at the precision's element width."""
-        self._sync(reads=[a_base, b_base], writes=[c_base])
+        DRAM operands sized at the precision's element width. `b_shared`
+        reads B from the tile's near buffer-die bank instead of DRAM
+        (steady-state SHARED residency, e.g. the decode KV cache);
+        `b_base` is then a byte offset inside the bank."""
+        self._sync(reads=[a_base, ("sh", b_base) if b_shared else b_base],
+                   writes=[c_base])
+        if b_shared:
+            eb = self.PREC[prec]["eb"]
+            assert int(K * N_ * eb) <= isa.SHARED_SIZE, \
+                f"SHARED-resident operand {K}x{N_} exceeds bank capacity"
         if prec != "f16":
-            return self._gemm_prec(a_base, b_base, c_base, M, K, N_, name, prec)
+            return self._gemm_prec(a_base, b_base, c_base, M, K, N_, name,
+                                   prec, b_shared)
         mb, kb, nb = M // BN, K // BN, N_ // BN
+        ldb = self._load_block_shared if b_shared else self._load_block
         idx = 0
         for m in range(mb):
             for n in range(nb):
                 tp = self.b.t(self._tile_for(idx)); idx += 1
                 if self.dbuf and kb >= 2:
-                    self._gemm_block_dbuf(tp, a_base, b_base, K, N_, m, n, kb, name)
+                    self._gemm_block_dbuf(tp, a_base, b_base, K, N_, m, n, kb,
+                                          name, ldb)
                 else:
                     for kk in range(kb):
                         self._load_block(tp, a_base, K, m, kk, self.LA)
-                        self._load_block(tp, b_base, N_, kk, n, self.LB)
+                        ldb(tp, b_base, N_, kk, n, self.LB)
                         tp.dma_fence()
                         tp.mxu("MXU_F16F16", self.LA, self.LB, self.LC, kk > 0, name)
                         tp.wait_mxu()
@@ -310,7 +332,8 @@ class Compiler:
                 tp.vpu("VPU_CVT_F32_F16", a=self.LC, d=self.LT2)
                 self._store_block(tp, self.LT2, c_base, N_, m, n)
 
-    def _gemm_block_dbuf(self, tp, a_base, b_base, K, N_, m, n, kb, name):
+    def _gemm_block_dbuf(self, tp, a_base, b_base, K, N_, m, n, kb, name,
+                         ldb=None):
         """One output block via a depth-D multi-buffered K-loop. D operand
         slots; the loop keeps D-1 K-steps prefetched ahead while the MXU
         computes the current step. `DMA_FENCE keep=2*ahead` drains only the
@@ -318,26 +341,29 @@ class Compiler:
         prefetched steps in flight, so the DMA engine overlaps the MXU and
         stays fed across DRAM read latency. No WAIT_MXU between steps: the
         MXU's in-flight accumulator forwarding chains the k-accumulation."""
+        if ldb is None:
+            ldb = self._load_block
         D = min(self.dbuf_depth, kb)
         A = [self.LA + i * 0x800 for i in range(D)]  # D A slots (512 B blocks)
         B = [self.LB + i * 0x800 for i in range(D)]  # D B slots
         # prologue: prefetch the first D-1 steps
         for j in range(D - 1):
             self._load_block(tp, a_base, K, m, j, A[j % D])
-            self._load_block(tp, b_base, N_, j, n, B[j % D])
+            ldb(tp, b_base, N_, j, n, B[j % D])
         for kk in range(kb):
             s = kk % D
             nj = kk + (D - 1)             # step to prefetch this iteration
             if nj < kb:
                 self._load_block(tp, a_base, K, m, nj, A[nj % D])
-                self._load_block(tp, b_base, N_, nj, n, B[nj % D])
+                ldb(tp, b_base, N_, nj, n, B[nj % D])
             # steps still allowed outstanding ahead of the current step
             ahead = min(kb - 1, kk + D - 1) - kk
             tp.dma_fence(keep=2 * ahead)  # current step's operands drained
             tp.mxu("MXU_F16F16", A[s], B[s], self.LC, kk > 0, name)
         tp.wait_mxu()                     # accumulator committed before convert
 
-    def _gemm_prec(self, a_base, b_base, c_base, M, K, N_, name, prec):
+    def _gemm_prec(self, a_base, b_base, c_base, M, K, N_, name, prec,
+                   b_shared=False):
         """Low-precision (INT8/INT4) GEMM, timing model. Each MXU issue packs
         `kpo` K-blocks into the fixed 512 B operand slab, so a lower precision
         needs proportionally fewer issues and moves fewer DRAM bytes. Reuses
@@ -354,7 +380,11 @@ class Compiler:
                    ib(K * eb), ib(kw * eb))
 
         def load_B(tp, j, n, off):        # B slab: kw rows x 16 cols (K x N)
-            src = isa.dram(b_base + ib((j * kw * N_ + n * BN) * eb))
+            if b_shared:                  # near-bank residency (see _gemm)
+                src = isa.shared(isa.tile_group(tp.tid),
+                                 b_base + ib((j * kw * N_ + n * BN) * eb))
+            else:
+                src = isa.dram(b_base + ib((j * kw * N_ + n * BN) * eb))
             tp.dma(src, isa.local(tp.tid, off), kw, ib(BN * eb),
                    ib(N_ * eb), ib(BN * eb))
 

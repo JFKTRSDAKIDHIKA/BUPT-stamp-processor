@@ -3,6 +3,7 @@
 
 #include "timing/timing_model.h"
 #include "common/address.h"
+#include "cycle/flit.h"
 
 #include <yaml-cpp/yaml.h>
 #include "base/base.h"
@@ -51,9 +52,8 @@ void TimingSimulator::cleanup_ramulator() { mem_sys_ = nullptr; }
 // ─── NoC hop calculation ─────────────────────────────────────
 
 int TimingSimulator::noc_hops(TileId src, TileId dst) const {
-    int cw  = (dst - src + NUM_TILES) % NUM_TILES;
-    int ccw = (src - dst + NUM_TILES) % NUM_TILES;
-    return std::min(cw, ccw);
+    // Topology-aware shortest path (ring / mesh / torus per MOBOL_TOPOLOGY).
+    return mobol::cycle::noc_hops_topo(src, dst);
 }
 
 // ─── DMA cycle calculation ───────────────────────────────────

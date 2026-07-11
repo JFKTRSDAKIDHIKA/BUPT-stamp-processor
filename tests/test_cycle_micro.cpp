@@ -118,6 +118,12 @@ void t2_noc_bandwidth() {
 /// (4 hops), up to bank1, response drops at gateway 4, relays back 4 hops.
 void t3_near_far_shared() {
     Cycle near_span, far_span;
+    if (NUM_BANKS < 2) {
+        // Single-bank structure: every SHARED access is near; there is no
+        // far bank to measure. The near-path KAT still runs below via T6.
+        std::cout << "[PASS] T3 skipped (NUM_BANKS=1: no far bank exists)\n";
+        return;
+    }
     {
         CycleConfig cfg;
         cfg.ramulator_config = g_ramulator;
@@ -148,7 +154,14 @@ void t3_near_far_shared() {
     }
     CHECK_EQ("T3 near SHARED pull span", near_span, Cycle{3});
     CHECK("T3 far > near (NUMA affinity visible)", far_span > near_span);
-    CHECK_EQ("T3 far SHARED pull span", far_span, Cycle{13});
+    // Far pull: near span + NoC transit both ways. The request rides the
+    // NoC to the gateway tile of the far bank's group (inject reg 1 cy +
+    // 1 cy/hop) and the response returns the same way, so
+    //   far = near + 2 * (1 + hops(tile0, gateway)).
+    // Ring baseline: gateway = tile 4, 4 hops -> 3 + 2*5 = 13.
+    // Mesh/torus 4x4: gateway = tile 4, 1 hop  -> 3 + 2*2 = 7.
+    int gw_hops = noc_hops_topo(0, gateway_tile(0, GroupId{1}));
+    CHECK_EQ("T3 far SHARED pull span", far_span, Cycle{3 + 2 * (1 + gw_hops)});
 }
 
 /// T4: MXU pipeline: 8 back-to-back accumulating ops (II = 1) issue at
@@ -276,5 +289,5 @@ int main(int argc, char** argv) {
 
     std::cout << "\n=== cycle microbenchmarks: "
               << (failures == 0 ? "PASSED" : "FAILED") << " ===\n";
-    return failures == 0 ? 1 * (failures != 0) : 0;
+    return failures == 0 ? 0 : 1;
 }

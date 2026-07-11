@@ -81,6 +81,10 @@ int main(int argc, char** argv) {
                   << ",\"mxu_util\":" << s.mxu_utilization
                   << ",\"noc_flit_hops\":" << s.noc_flit_hops
                   << ",\"noc_max_link_util\":" << s.max_noc_link_utilization
+                  << ",\"noc_avg_link_util\":" << s.avg_noc_link_utilization
+                  << ",\"noc_eject_blocked\":" << s.noc_eject_blocked
+                  << ",\"vbond_tile_bank_flits\":" << s.vbond_tile_bank_flits
+                  << ",\"vbond_bank_dram_flits\":" << s.vbond_bank_dram_flits
                   << ",\"dram_reads\":" << s.dram_reads
                   << ",\"dram_read_bytes\":" << s.dram_read_bytes
                   << ",\"dram_write_bytes\":" << s.dram_write_bytes

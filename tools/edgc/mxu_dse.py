@@ -36,7 +36,7 @@ def analyze_layer(cfg, M, L):
     gs = layer_gemms(cfg, M, L)
     useful = 0
     per_S = {S: dict(passes=0, peak=0) for S in SIZES}
-    for (_, Mx, K, N, mult, _prec) in gs:
+    for (_, Mx, K, N, mult, _prec, _kv) in gs:
         useful += mult * Mx * K * N
         for S in SIZES:
             p = mult * passes(Mx, K, N, S)

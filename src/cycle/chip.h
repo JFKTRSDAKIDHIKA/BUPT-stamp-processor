@@ -1,7 +1,7 @@
 /// @file chip.h
 /// @brief Top-level cycle-accurate MOBOL chip model.
 ///
-/// Composes: 16 TileCores (base die) + RingNoC + 4 BankCtrls (buffer die)
+/// Composes: TileCores (base die) + NoC (ring/mesh/torus) + BankCtrls (buffer die)
 /// + vertical hybrid bonds + DramCtrl/Ramulator2 (DRAM die).
 ///
 /// One call to tick() advances exactly one logic cycle everywhere; the
@@ -65,7 +65,7 @@ private:
     CycleConfig cfg_;
     MemoryModel mem_;
     Fabric fab_;
-    RingNoC noc_;
+    NocImpl noc_;
     std::vector<BankCtrl> banks_;
     DramCtrl dram_;
     std::vector<TileCore> tiles_;
